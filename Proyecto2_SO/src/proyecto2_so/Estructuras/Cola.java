@@ -5,8 +5,8 @@
 package proyecto2_so.Estructuras;
 
 public class Cola<T> {
-    private Nodo<T> frente; // El primero en la fila (head)
-    private Nodo<T> fin;    // El último en la fila (tail)
+    private Nodo<T> frente; 
+    private Nodo<T> fin;    
     private int tamaño;
 
     public Cola() {
@@ -15,7 +15,7 @@ public class Cola<T> {
         this.tamaño = 0;
     }
 
-    // Método para agregar un elemento al final de la cola (Enqueue)
+    
     public void encolar(T data) {
         Nodo<T> nuevoNodo = new Nodo<>(data);
         if (estaVacia()) {
@@ -28,15 +28,15 @@ public class Cola<T> {
         tamaño++;
     }
 
-    // Método para sacar y devolver el primer elemento de la cola (Dequeue)
+    
     public T desencolar() {
         if (estaVacia()) {
-            return null; // O podrías lanzar una excepción
+            return null; 
         }
         T data = frente.getData();
         frente = frente.getNext();
         
-        // Si al sacar el elemento la cola quedó vacía, el fin también es null
+    
         if (frente == null) {
             fin = null;
         }
@@ -44,7 +44,7 @@ public class Cola<T> {
         return data;
     }
 
-    // Método para ver el primer elemento sin sacarlo (Peek)
+   
     public T verFrente() {
         if (estaVacia()) {
             return null;

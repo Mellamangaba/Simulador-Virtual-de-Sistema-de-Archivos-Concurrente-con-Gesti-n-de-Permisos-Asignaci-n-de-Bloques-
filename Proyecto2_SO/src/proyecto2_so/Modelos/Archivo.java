@@ -4,10 +4,43 @@
  */
 package proyecto2_so.Modelos;
 
-/**
- *
- * @author gabri
- */
+
+import proyecto2_so.Estructuras.ListaEnlazada;
+
 public class Archivo {
+    private String nombre;
+    private String dueño; 
+    private int tamañoEnBloques;
     
+   
+    private ListaEnlazada<Integer> bloquesAsignados;
+
+
+    public Archivo(String nombre, String dueño, int tamañoEnBloques) {
+        this.nombre = nombre;
+        this.dueño = dueño;
+        this.tamañoEnBloques = tamañoEnBloques;
+        this.bloquesAsignados = new ListaEnlazada<>(); 
+    }
+
+    // Getters y Setters
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDueño() {
+        return dueño;
+    }
+
+    public int getTamañoEnBloques() {
+        return tamañoEnBloques;
+    }
+
+    public ListaEnlazada<Integer> getBloquesAsignados() {
+        return bloquesAsignados;
+    }
 }
