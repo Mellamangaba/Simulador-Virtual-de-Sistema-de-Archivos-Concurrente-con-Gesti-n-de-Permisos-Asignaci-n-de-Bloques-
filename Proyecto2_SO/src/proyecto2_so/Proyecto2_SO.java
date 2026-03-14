@@ -3,18 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package proyecto2_so;
-
+import proyecto2_so.Controladores.SistemaArchivos;
+import proyecto2_so.Vistas.MainInterface;
 /**
  *
  * @author gabri
  */
 public class Proyecto2_SO {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        // 1. Inicializamos la lógica central
+        SistemaArchivos sistema = new SistemaArchivos(64);
+        
+        // 2. Iniciamos la interfaz gráfica
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainInterface(sistema).setVisible(true);
+        });
     }
-    
 }
