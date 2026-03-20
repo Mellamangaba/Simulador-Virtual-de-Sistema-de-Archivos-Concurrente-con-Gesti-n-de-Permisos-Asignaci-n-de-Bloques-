@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package proyecto2_so.Vistas;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Modelos.Proceso;
 /**
@@ -29,7 +32,7 @@ private void inicializarDiscoGrafico() {
     panelDisco.removeAll();
     panelDisco.setLayout(new java.awt.GridLayout(8, 8, 2, 2));
     
-    // 1. Obtenemos el mapa como boolean[] (como está en tu clase)
+    // 1. Obtenemos el mapa como boolean[] 
     boolean[] mapa = fs.getMapaBits(); 
 
     for (int i = 0; i < 64; i++) {
@@ -37,7 +40,7 @@ private void inicializarDiscoGrafico() {
         bloque.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.DARK_GRAY));
         
         // 2. Lógica de color ajustada:
-        // En tu constructor, pones los bloques en 'true' al iniciar.
+        
         // Si true = Libre, entonces pintamos Gris. Si false = Ocupado, pintamos Azul.
         if (mapa[i]) { 
             bloque.setBackground(java.awt.Color.LIGHT_GRAY); // Bloque Libre (true)
@@ -51,12 +54,20 @@ private void inicializarDiscoGrafico() {
     panelDisco.repaint();
 }
 public void actualizarVista() {
-    // 1. Refrescar el disco
+    // 1. Refrescar el disco (los cuadritos grises/azules)
     inicializarDiscoGrafico();
     
-    // 2. Refrescar el árbol (esto es un ejemplo, depende de tu estructura de nodos)
-    // DefaultTreeModel modelo = (DefaultTreeModel) arbolArchivos.getModel();
-    // modelo.reload(); 
+    // 2. Refrescar el árbol de archivos
+   
+    DefaultMutableTreeNode nodoRaiz = new DefaultMutableTreeNode("/");
+    
+    // Aquí es donde luego llamaremos a una función para llenar los hijos
+    // fs.llenarNodos(nodoRaiz); 
+    
+    DefaultTreeModel modeloArbol = new DefaultTreeModel(nodoRaiz);
+    arbolArchivos.setModel(modeloArbol);
+    
+    System.out.println("Vista y Árbol actualizados.");
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -215,7 +226,17 @@ public void actualizarVista() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
-        // TODO add your handling code here:
+        int bloqueAlAzar = (int) (Math.random() * 64);
+    
+    
+    fs.getMapaBits()[bloqueAlAzar] = false; 
+    
+    
+    actualizarVista();
+    
+    
+    javax.swing.JOptionPane.showMessageDialog(this, "Se ha simulado un fallo en el bloque: " + bloqueAlAzar);
+
     }//GEN-LAST:event_btnSimularFalloActionPerformed
 
     /**
