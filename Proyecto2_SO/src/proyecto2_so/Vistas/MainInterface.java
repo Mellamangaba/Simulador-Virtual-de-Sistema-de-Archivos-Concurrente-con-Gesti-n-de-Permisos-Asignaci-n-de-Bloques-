@@ -26,26 +26,37 @@ public class MainInterface extends javax.swing.JFrame {
         
     }
 private void inicializarDiscoGrafico() {
-    // 1. Configuramos el panel para que sea una cuadrícula de 8x8
     panelDisco.removeAll();
     panelDisco.setLayout(new java.awt.GridLayout(8, 8, 2, 2));
     
-    // 2. Creamos los 64 bloques
+    // 1. Obtenemos el mapa como boolean[] (como está en tu clase)
+    boolean[] mapa = fs.getMapaBits(); 
+
     for (int i = 0; i < 64; i++) {
         javax.swing.JPanel bloque = new javax.swing.JPanel();
+        bloque.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.DARK_GRAY));
         
-        // Estilo visual: borde negro y fondo gris
-        bloque.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.BLACK));
-        bloque.setBackground(java.awt.Color.LIGHT_GRAY); 
+        // 2. Lógica de color ajustada:
+        // En tu constructor, pones los bloques en 'true' al iniciar.
+        // Si true = Libre, entonces pintamos Gris. Si false = Ocupado, pintamos Azul.
+        if (mapa[i]) { 
+            bloque.setBackground(java.awt.Color.LIGHT_GRAY); // Bloque Libre (true)
+        } else {
+            bloque.setBackground(java.awt.Color.BLUE); // Bloque Ocupado (false)
+        }
         
-        // Agregamos el cuadrito al panel
         panelDisco.add(bloque);
     }
-    
-    // 3. Refrescamos la pantalla para que aparezcan los cuadros
     panelDisco.revalidate();
     panelDisco.repaint();
-
+}
+public void actualizarVista() {
+    // 1. Refrescar el disco
+    inicializarDiscoGrafico();
+    
+    // 2. Refrescar el árbol (esto es un ejemplo, depende de tu estructura de nodos)
+    // DefaultTreeModel modelo = (DefaultTreeModel) arbolArchivos.getModel();
+    // modelo.reload(); 
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -80,7 +91,7 @@ private void inicializarDiscoGrafico() {
         panelDisco.setLayout(panelDiscoLayout);
         panelDiscoLayout.setHorizontalGroup(
             panelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 463, Short.MAX_VALUE)
+            .addGap(0, 646, Short.MAX_VALUE)
         );
         panelDiscoLayout.setVerticalGroup(
             panelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +171,7 @@ private void inicializarDiscoGrafico() {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -181,9 +192,9 @@ private void inicializarDiscoGrafico() {
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(scrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(46, 46, 46)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
+                        .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
