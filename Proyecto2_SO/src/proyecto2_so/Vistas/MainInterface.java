@@ -10,43 +10,20 @@ import proyecto2_so.Modelos.Proceso;
  * @author sofia
  */
 public class MainInterface extends javax.swing.JFrame {
-    private SistemaArchivos fs;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainInterface.class.getName());
-
-    
-    
+    private static SistemaArchivos sistema;
+    private SistemaArchivos fs;
     /**
      * Creates new form MainInterface
      */
     public MainInterface(SistemaArchivos sistema) {
-        this.fs = sistema;
         initComponents();
         this.setLocationRelativeTo(null);
+        
+        
     }
 
-    private void inicializarDiscoGrafico() {
-        // Todo tu código de los 64 bloques va aquí adentro...
-        panelDisco.removeAll();
-        panelDisco.setLayout(new java.awt.GridLayout(8, 8));
-        
-        for (int i = 0; i < 64; i++) {
-            javax.swing.JPanel bloque = new javax.swing.JPanel();
-            bloque.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.BLACK));
-            bloque.setBackground(java.awt.Color.LIGHT_GRAY);
-            panelDisco.add(bloque);
-        }
-        
-        panelDisco.revalidate();
-        panelDisco.repaint();
-    }
-    
-    // 4. CÓDIGO GENERADO POR NETBEANS (Este bloque no lo toques)
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    private void initComponents() {
-        // ... esto lo maneja NetBeans automáticamente ...
-    }
-    // </editor-fold>
-}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -56,154 +33,47 @@ public class MainInterface extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        scrollArbol = new javax.swing.JScrollPane();
-        arbolArchivos = new javax.swing.JTree();
-        panelControles = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        comboModo = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        comboPoliticas = new javax.swing.JComboBox<>();
-        btnSimularFallo = new javax.swing.JButton();
-        panelDisco = new javax.swing.JPanel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        scrollArbol.setViewportView(arbolArchivos);
-
-        panelControles.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jLabel1.setText("Modo:");
-
-        comboModo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Usuario" }));
-
-        jLabel2.setText("Planificador:");
-
-        comboPoliticas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FIFO", "SSTF", "SCAN", "C-SCAN" }));
-
-        btnSimularFallo.setBackground(new java.awt.Color(255, 102, 51));
-        btnSimularFallo.setText("Simular Fallo");
-        btnSimularFallo.addActionListener(this::btnSimularFalloActionPerformed);
-
-        javax.swing.GroupLayout panelControlesLayout = new javax.swing.GroupLayout(panelControles);
-        panelControles.setLayout(panelControlesLayout);
-        panelControlesLayout.setHorizontalGroup(
-            panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelControlesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboModo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboPoliticas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnSimularFallo)
-                .addContainerGap(461, Short.MAX_VALUE))
-        );
-        panelControlesLayout.setVerticalGroup(
-            panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelControlesLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(panelControlesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(comboModo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(comboPoliticas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimularFallo))
-                .addContainerGap(52, Short.MAX_VALUE))
-        );
-
-        panelDisco.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        javax.swing.GroupLayout panelDiscoLayout = new javax.swing.GroupLayout(panelDisco);
-        panelDisco.setLayout(panelDiscoLayout);
-        panelDiscoLayout.setHorizontalGroup(
-            panelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 415, Short.MAX_VALUE)
-        );
-        panelDiscoLayout.setVerticalGroup(
-            panelDiscoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(scrollArbol, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(64, 64, 64)
-                        .addComponent(panelDisco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(panelControles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(panelControles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(scrollArbol, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-                    .addComponent(panelDisco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(117, Short.MAX_VALUE))
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSimularFalloActionPerformed
-
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-    
-        
-    proyecto2_so.Controladores.SistemaArchivos sistemaDummy = new proyecto2_so.Controladores.SistemaArchivos(64);
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
 
-    java.awt.EventQueue.invokeLater(() -> {
-        
-        new MainInterface(sistemaDummy).setVisible(true);
-    });
-}
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new MainInterface(sistema).setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTree arbolArchivos;
-    private javax.swing.JButton btnSimularFallo;
-    private javax.swing.JComboBox<String> comboModo;
-    private javax.swing.JComboBox<String> comboPoliticas;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel panelControles;
-    private javax.swing.JPanel panelDisco;
-    private javax.swing.JScrollPane scrollArbol;
     // End of variables declaration//GEN-END:variables
 }
