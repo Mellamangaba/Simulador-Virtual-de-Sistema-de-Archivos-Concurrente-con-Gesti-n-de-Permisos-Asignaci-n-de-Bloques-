@@ -305,6 +305,12 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Archivo"/>
           </Properties>
+<<<<<<< HEAD
+=======
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+          </Events>
+>>>>>>> f79ba254e43db2b4ea6845944524af3580c2bcfb
         </Component>
         <Component class="javax.swing.JButton" name="jButton2">
           <Properties>
@@ -315,6 +321,12 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar"/>
           </Properties>
+<<<<<<< HEAD
+=======
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+          </Events>
+>>>>>>> f79ba254e43db2b4ea6845944524af3580c2bcfb
         </Component>
       </SubComponents>
     </Container>

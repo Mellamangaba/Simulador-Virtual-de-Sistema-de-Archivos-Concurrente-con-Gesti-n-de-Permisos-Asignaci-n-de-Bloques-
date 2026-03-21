@@ -2,23 +2,75 @@ package proyecto2_so.Controladores;
 
 public class SistemaArchivos {
     
-    // Nuestro disco duro simulado: un arreglo de 64 booleanos
-    // true = Libre (Gris), false = Ocupado/Dañado (Azul)
-    private boolean[] mapaBits;
 
-    // Constructor: Esto se ejecuta cuando creamos el "new SistemaArchivos()"
+    private boolean[] mapaBits;
+    private java.util.ArrayList<Archivo> listaArchivos;
+
+   
     public SistemaArchivos() {
-        // 1. Creamos el arreglo con exactamente 64 espacios
+        listaArchivos = new java.util.ArrayList<>();
         mapaBits = new boolean[100];
         
-        // 2. Llenamos todos los espacios como "Libres" (true) al inicio
+        
         for (int i = 0; i < 100; i++) {
             mapaBits[i] = true;
         }
     }
 
-    // Método para que la ventana pueda pedir y leer los bloques
     public boolean[] getMapaBits() {
         return mapaBits;
+    }
+    public boolean crearArchivo(String nombre, int cantidadBloques) {
+        
+        int bloquesLibres = 0;
+        for (int i = 0; i < 100; i++) {
+            if (mapaBits[i]) { 
+                bloquesLibres++;
+            }
+        }
+
+        if (bloquesLibres < cantidadBloques) {
+            return false; 
+        }
+
+        int bloquesAsignados = 0;
+        for (int i = 0; i < 100 && bloquesAsignados < cantidadBloques; i++) {
+            if (mapaBits[i]) {
+                mapaBits[i] = false; 
+                bloquesAsignados++;
+            }
+        }
+        Archivo nuevoArchivo = new Archivo(nombre, "txt", cantidadBloques * 1024, cantidadBloques);
+        listaArchivos.add(nuevoArchivo);
+        return true; 
+    }
+    public java.util.ArrayList<Archivo> getListaArchivos() {
+        return listaArchivos;
+    }
+    public boolean eliminarArchivo(String nombre) {
+        proyecto2_so.Controladores.Archivo archivoABorrar = null;
+        
+        for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
+            if (arch.getNombre().equals(nombre)) {
+                archivoABorrar = arch;
+                break;
+            }
+        }
+        
+        if (archivoABorrar != null) {
+            int bloquesALiberar = archivoABorrar.getBloques();
+            
+            for (int i = 0; i < 100 && bloquesALiberar > 0; i++) {
+                if (!mapaBits[i]) { 
+                    mapaBits[i] = true;
+                    bloquesALiberar--;
+                }
+            }
+            
+            listaArchivos.remove(archivoABorrar);
+            return true;
+        }
+        
+        return false; 
     }
 }
