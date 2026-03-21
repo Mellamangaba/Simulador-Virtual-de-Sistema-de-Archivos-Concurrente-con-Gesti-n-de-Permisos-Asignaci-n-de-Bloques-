@@ -5,6 +5,7 @@ public class Archivo {
     private String extension;
     private int bloques;
     private int tamanio; 
+    private int bloqueInicio;
 
     public Archivo(String nombre, int bloques) {
         this.nombre = nombre;
@@ -32,4 +33,8 @@ public class Archivo {
     public void setNombre(String nombre) {
     this.nombre = nombre;
     }
+    public int getBloqueInicio() {
+    return bloqueInicio; 
+}
+    
 }

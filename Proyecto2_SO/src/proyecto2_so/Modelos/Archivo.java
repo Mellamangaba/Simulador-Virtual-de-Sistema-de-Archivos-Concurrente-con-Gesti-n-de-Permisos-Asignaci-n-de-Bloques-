@@ -11,6 +11,7 @@ public class Archivo {
     private String nombre;
     private String dueño; 
     private int tamañoEnBloques;
+    private int bloqueInicio;
     
    
     private ListaEnlazada<Integer> bloquesAsignados;
@@ -43,4 +44,8 @@ public class Archivo {
     public ListaEnlazada<Integer> getBloquesAsignados() {
         return bloquesAsignados;
     }
+    
+    public int getBloqueInicio() {
+    return bloqueInicio; 
+}
 }

@@ -8,6 +8,10 @@ import javax.swing.tree.DefaultTreeModel;
 import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Modelos.Proceso;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.DefaultListModel;
+import java.util.Queue;
+import java.awt.Color;
 /**
  *
  * @author sofia
@@ -30,7 +34,7 @@ public class MainInterface extends javax.swing.JFrame {
         
     }
 private void inicializarDiscoGrafico() {
-panelDisco.removeAll();
+    panelDisco.removeAll();
     panelDisco.setLayout(new java.awt.GridLayout(10, 10, 5, 5));
     panelDisco.setBackground(new java.awt.Color(30, 33, 36));
 
@@ -38,19 +42,31 @@ panelDisco.removeAll();
 
     for (int i = 0; i < 100; i++) {
         javax.swing.JLabel bloque = new javax.swing.JLabel();
-        bloque.setOpaque(true); 
-        
+        bloque.setOpaque(true);
         bloque.setText(String.format("%02d", i));
-        bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER); 
-        bloque.setForeground(java.awt.Color.WHITE); 
+        bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        bloque.setForeground(java.awt.Color.WHITE);
         bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
-        
-        if (mapa[i]) { 
-            bloque.setBackground(new java.awt.Color(54, 57, 63)); 
+
+        if (mapa[i]) {
+            // Buscamos qué archivo ocupa este bloque 'i'
+            proyecto2_so.Controladores.Archivo arch = fs.buscarArchivoPorBloque(i);
+            
+            if (arch != null) {
+                // Imprime en consola para que verifiques si detecta la extensión
+                System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
+                
+                // Usamos tu método de colores
+                bloque.setBackground(obtenerColorPorExtension(arch.getExtension()));
+            } else {
+                // Si el mapa de bits dice que está ocupado pero no hay archivo (Rojo Error)
+                bloque.setBackground(new java.awt.Color(231, 76, 60));
+            }
         } else {
-            bloque.setBackground(new java.awt.Color(231, 76, 60)); 
+            // Bloque vacío (Gris oscuro)
+            bloque.setBackground(new java.awt.Color(54, 57, 63));
         }
-        
+
         panelDisco.add(bloque);
     }
     panelDisco.revalidate();
@@ -61,6 +77,23 @@ public void actualizarVista() {
         actualizarTabla();
         actualizarArbol(); 
     }
+
+private java.awt.Color obtenerColorExtension(String ext) {
+    if (ext == null) return java.awt.Color.WHITE;
+    
+    switch (ext.toLowerCase()) {
+        case ".txt": return new java.awt.Color(100, 150, 255); // Azul
+        case ".pdf": return new java.awt.Color(255, 100, 100); // Rojo
+        case ".jpg":
+        case ".png": return new java.awt.Color(100, 255, 100); // Verde
+        case ".docx": return new java.awt.Color(200, 100, 255); // Morado
+        default: return java.awt.Color.GRAY; // Otros
+    }
+
+    
+    
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -391,4 +424,18 @@ private void actualizarArbol() {
     private javax.swing.JPanel panelDisco;
     private javax.swing.JTable tablaAsignacion;
     // End of variables declaration//GEN-END:variables
+
+private java.awt.Color obtenerColorPorExtension(String ext) {
+    if (ext == null) return java.awt.Color.GRAY;
+    
+    // Convertimos a minúsculas para que no importe si es .TXT o .txt
+    String e = ext.toLowerCase();
+    
+    if (e.contains("txt")) return new java.awt.Color(102, 178, 255); // Azul
+    if (e.contains("pdf")) return new java.awt.Color(255, 102, 102); // Rojo suave
+    if (e.contains("jpg") || e.contains("png")) return new java.awt.Color(102, 255, 102); // Verde
+    
+    return java.awt.Color.ORANGE; // Si no es ninguno, ponlo NARANJA para saber que falló la extensión
+
+}
 }

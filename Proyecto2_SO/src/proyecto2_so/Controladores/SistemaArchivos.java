@@ -81,4 +81,35 @@ public class SistemaArchivos {
     }
     return false; // No se encontró el archivo
 }
+    
+private java.util.Queue<String> colaProcesos = new java.util.LinkedList<>();
+
+public void agregarACola(String operacion) {
+    colaProcesos.add(operacion);
+}
+
+public String obtenerSiguienteProceso() {
+    return colaProcesos.poll(); // Saca el primero de la lista
+}
+
+public java.util.Queue<String> getCola() {
+    return colaProcesos;
+}
+
+public proyecto2_so.Controladores.Archivo buscarArchivoPorBloque(int numBloque) {
+    // 1. Recorremos tu lista real de archivos
+    for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
+        
+        // 2. Calculamos el rango de bloques que ocupa ese archivo
+        int inicio = arch.getBloqueInicio();
+        int fin = inicio + arch.getTamaño();
+        
+        // 3. ¿El bloque que estamos pintando (i) está dentro de este rango?
+        if (numBloque >= inicio && numBloque < fin) {
+            return arch; // ¡Lo encontramos! Enviamos el archivo a la interfaz
+        }
+    }
+    return null; // Si nadie lo reclama, devuelve nada
+}
+
 }
