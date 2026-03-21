@@ -84,6 +84,7 @@ public void actualizarVista() {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -98,9 +99,9 @@ public void actualizarVista() {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Planificador:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Administrador", "Usuario" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "FIFO", "SSTF", "SCAN", "C-SCAN" }));
 
         btnSimularFallo.setBackground(new java.awt.Color(255, 153, 0));
         btnSimularFallo.setText("Simular Fallo");
@@ -151,6 +152,9 @@ public void actualizarVista() {
         jButton3.setText("Eliminar");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
+        jButton4.setText("Renombrar");
+        jButton4.addActionListener(this::jButton4ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -170,9 +174,11 @@ public void actualizarVista() {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(495, 495, 495)
+                        .addGap(457, 457, 457)
                         .addComponent(jButton1)
-                        .addGap(92, 92, 92)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4)
+                        .addGap(34, 34, 34)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                         .addComponent(jButton3))
@@ -192,7 +198,8 @@ public void actualizarVista() {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addGap(5, 5, 5)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -309,6 +316,33 @@ private void actualizarArbol() {
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+                                        
+    // 1. Preguntamos qué archivo de la tabla quiere renombrar
+    int filaSeleccionada = tablaAsignacion.getSelectedRow();
+    
+    if (filaSeleccionada != -1) {
+        // 2. Obtenemos el nombre actual de la columna 0 de tu tabla
+        String nombreActual = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
+        
+        // 3. Pedimos el nuevo nombre
+        String nuevoNombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nuevo nombre para: " + nombreActual);
+        
+        if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
+            // 4. Llamamos a la lógica
+            if (fs.renombrarArchivo(nombreActual, nuevoNombre)) {
+                actualizarVista(); // Refrescamos Árbol y Tabla
+                javax.swing.JOptionPane.showMessageDialog(this, "¡Archivo renombrado con éxito!");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error al renombrar.");
+            }
+        }
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo de la tabla primero.");
+    }
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -345,6 +379,7 @@ private void actualizarArbol() {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;

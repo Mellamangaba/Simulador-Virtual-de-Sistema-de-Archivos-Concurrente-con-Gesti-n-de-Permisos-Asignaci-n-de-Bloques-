@@ -28,4 +28,8 @@ public class Archivo {
     public int getTamaño() {
         return tamanio;
     }
+    
+    public void setNombre(String nombre) {
+    this.nombre = nombre;
+    }
 }

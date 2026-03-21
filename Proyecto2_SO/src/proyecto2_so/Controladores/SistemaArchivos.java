@@ -72,4 +72,13 @@ public class SistemaArchivos {
         
         return false; 
     }
+    public boolean renombrarArchivo(String nombreViejo, String nombreNuevo) {
+    for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
+        if (arch.getNombre().equals(nombreViejo)) {
+            arch.setNombre(nombreNuevo);
+            return true; // Éxito
+        }
+    }
+    return false; // No se encontró el archivo
+}
 }
