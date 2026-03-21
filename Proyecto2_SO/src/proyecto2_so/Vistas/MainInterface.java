@@ -164,6 +164,7 @@ actualizarTabla();
         jButton2.setText("Crear Directorio");
 
         jButton3.setText("Eliminar");
+        jButton3.addActionListener(this::jButton3ActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -291,6 +292,22 @@ private void actualizarTabla() {
         }
     
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int filaSeleccionada = tablaAsignacion.getSelectedRow();
+        
+        if (filaSeleccionada >= 0) {
+            String nombreArchivo = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
+            
+            boolean exito = fs.eliminarArchivo(nombreArchivo);
+            
+            if (exito) {
+                actualizarVista(); 
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo en la tabla primero.");
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
