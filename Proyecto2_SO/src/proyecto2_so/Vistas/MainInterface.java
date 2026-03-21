@@ -31,28 +31,23 @@ public class MainInterface extends javax.swing.JFrame {
     }
 private void inicializarDiscoGrafico() {
 panelDisco.removeAll();
-    // 10 filas x 10 columnas, con 5 píxeles de separación entre cuadritos
     panelDisco.setLayout(new java.awt.GridLayout(10, 10, 5, 5));
-    panelDisco.setBackground(new java.awt.Color(30, 33, 36)); // Fondo oscuro para el panel
+    panelDisco.setBackground(new java.awt.Color(30, 33, 36));
 
     boolean[] mapa = fs.getMapaBits();
 
     for (int i = 0; i < 100; i++) {
         javax.swing.JLabel bloque = new javax.swing.JLabel();
-        bloque.setOpaque(true); // Necesario para que el JLabel se deje pintar
+        bloque.setOpaque(true); 
         
-        // Le ponemos el número con formato de 2 dígitos (00, 01, 02...)
         bloque.setText(String.format("%02d", i));
-        bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER); // Texto centrado
-        bloque.setForeground(java.awt.Color.WHITE); // Letras blancas
+        bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER); 
+        bloque.setForeground(java.awt.Color.WHITE); 
         bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
         
-        // Lógica de colores simulando tu diseño oscuro
         if (mapa[i]) { 
-            // Libre = Gris oscuro
             bloque.setBackground(new java.awt.Color(54, 57, 63)); 
         } else {
-            // Ocupado = Usamos un color rojo por defecto para probar (luego pondremos más colores)
             bloque.setBackground(new java.awt.Color(231, 76, 60)); 
         }
         
@@ -64,24 +59,20 @@ panelDisco.removeAll();
 public void actualizarVista() {
     
 inicializarDiscoGrafico();
+actualizarTabla();
     
-    // 2. Refrescar el árbol de archivos con datos de prueba
     javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("/");
     
-    // Creamos las carpetas
     javax.swing.tree.DefaultMutableTreeNode docs = new javax.swing.tree.DefaultMutableTreeNode("docs");
     javax.swing.tree.DefaultMutableTreeNode projects = new javax.swing.tree.DefaultMutableTreeNode("projects");
     
-    // Metemos unos archivos de prueba para que se vea como en tu foto
     docs.add(new javax.swing.tree.DefaultMutableTreeNode("docs1 : 1 bloques"));
     docs.add(new javax.swing.tree.DefaultMutableTreeNode("docs2 : 2 bloques"));
     projects.add(new javax.swing.tree.DefaultMutableTreeNode("project1 : 1 bloques"));
     
-    // Conectamos todo a la raíz
     raiz.add(docs);
     raiz.add(projects);
     
-    // Le mandamos el modelo al árbol visual
     javax.swing.tree.DefaultTreeModel modeloArbol = new javax.swing.tree.DefaultTreeModel(raiz);
     arbolArchivos.setModel(modeloArbol);
 }
@@ -168,6 +159,7 @@ inicializarDiscoGrafico();
         );
 
         jButton1.setText("Crear Archivo");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setText("Crear Directorio");
 
@@ -258,7 +250,16 @@ inicializarDiscoGrafico();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+private void actualizarTabla() {
+        // AQUÍ USAMOS TU NOMBRE CORRECTO: tablaAsignacion
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
+        modelo.setRowCount(0); // Borramos la tabla para volverla a llenar limpia
+        
+        // Recorremos la lista de archivos guardados y los metemos a la tabla
+        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+            modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), arch.getTamaño() + " KB"});
+        }
+    }
     private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
         int bloqueAlAzar = (int) (Math.random() * 10);
     
@@ -272,6 +273,24 @@ inicializarDiscoGrafico();
     javax.swing.JOptionPane.showMessageDialog(this, "Se ha simulado un fallo en el bloque: " + bloqueAlAzar);
 
     }//GEN-LAST:event_btnSimularFalloActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String nombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nombre del archivo:");
+        
+        if (nombre != null && !nombre.trim().isEmpty()) {
+            
+            int bloquesNecesarios = (int) (Math.random() * 5) + 1; 
+            
+            boolean exito = fs.crearArchivo(nombre, bloquesNecesarios);
+            
+            if (exito) {
+                actualizarVista(); 
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡Disco Lleno!");
+            }
+        }
+    
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -296,10 +315,8 @@ inicializarDiscoGrafico();
 
             java.awt.EventQueue.invokeLater(() -> {
             
-            // 1. ¡AQUÍ ESTÁ LA MAGIA! Creamos el "motor" del programa
             sistema = new proyecto2_so.Controladores.SistemaArchivos(); 
             
-            // 2. Ahora sí, le pasamos el motor a la ventana y la hacemos visible
             new MainInterface(sistema).setVisible(true);
             
         });
