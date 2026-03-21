@@ -57,25 +57,10 @@ panelDisco.removeAll();
     panelDisco.repaint();
 }
 public void actualizarVista() {
-    
-inicializarDiscoGrafico();
-actualizarTabla();
-    
-    javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("/");
-    
-    javax.swing.tree.DefaultMutableTreeNode docs = new javax.swing.tree.DefaultMutableTreeNode("docs");
-    javax.swing.tree.DefaultMutableTreeNode projects = new javax.swing.tree.DefaultMutableTreeNode("projects");
-    
-    docs.add(new javax.swing.tree.DefaultMutableTreeNode("docs1 : 1 bloques"));
-    docs.add(new javax.swing.tree.DefaultMutableTreeNode("docs2 : 2 bloques"));
-    projects.add(new javax.swing.tree.DefaultMutableTreeNode("project1 : 1 bloques"));
-    
-    raiz.add(docs);
-    raiz.add(projects);
-    
-    javax.swing.tree.DefaultTreeModel modeloArbol = new javax.swing.tree.DefaultTreeModel(raiz);
-    arbolArchivos.setModel(modeloArbol);
-}
+        inicializarDiscoGrafico();
+        actualizarTabla();
+        actualizarArbol(); 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -252,15 +237,30 @@ actualizarTabla();
         pack();
     }// </editor-fold>//GEN-END:initComponents
 private void actualizarTabla() {
-        // AQUÍ USAMOS TU NOMBRE CORRECTO: tablaAsignacion
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
-        modelo.setRowCount(0); // Borramos la tabla para volverla a llenar limpia
-        
-        // Recorremos la lista de archivos guardados y los metemos a la tabla
+        modelo.setRowCount(0); 
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
             modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), arch.getTamaño() + " KB"});
         }
     }
+private void actualizarArbol() {
+        javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("Disco Local/");
+
+        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+            javax.swing.tree.DefaultMutableTreeNode nodoArchivo = 
+                new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre() + "." + arch.getExtension());
+            
+            raiz.add(nodoArchivo);
+        }
+
+        javax.swing.tree.DefaultTreeModel modeloArbol = new javax.swing.tree.DefaultTreeModel(raiz);
+        arbolArchivos.setModel(modeloArbol);
+        
+        arbolArchivos.updateUI();
+        for (int i = 0; i < arbolArchivos.getRowCount(); i++) {
+            arbolArchivos.expandRow(i);
+        }
+ }
     private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
         int bloqueAlAzar = (int) (Math.random() * 10);
     

@@ -40,8 +40,7 @@ public class SistemaArchivos {
                 bloquesAsignados++;
             }
         }
-        Archivo nuevoArchivo = new Archivo(nombre, "txt", cantidadBloques * 1024, cantidadBloques);
-        listaArchivos.add(nuevoArchivo);
+        proyecto2_so.Controladores.Archivo nuevoArchivo = new proyecto2_so.Controladores.Archivo(nombre, cantidadBloques);        listaArchivos.add(nuevoArchivo);
         return true; 
     }
     public java.util.ArrayList<Archivo> getListaArchivos() {
