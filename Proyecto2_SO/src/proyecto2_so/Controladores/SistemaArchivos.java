@@ -1,53 +1,24 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package proyecto2_so.Controladores;
 
-import proyecto2_so.Modelos.Directorio;
-
 public class SistemaArchivos {
-    private Directorio raiz; 
-    private int totalBloques;
     
-    
-    private boolean[] mapaBits; 
+    // Nuestro disco duro simulado: un arreglo de 64 booleanos
+    // true = Libre (Gris), false = Ocupado/Dañado (Azul)
+    private boolean[] mapaBits;
 
-    // Constructor
-    public SistemaArchivos(int totalBloques) {
-        this.totalBloques = totalBloques;
-        this.mapaBits = new boolean[totalBloques];
+    // Constructor: Esto se ejecuta cuando creamos el "new SistemaArchivos()"
+    public SistemaArchivos() {
+        // 1. Creamos el arreglo con exactamente 64 espacios
+        mapaBits = new boolean[100];
         
-       
-        for (int i = 0; i < totalBloques; i++) {
-            this.mapaBits[i] = true;
+        // 2. Llenamos todos los espacios como "Libres" (true) al inicio
+        for (int i = 0; i < 100; i++) {
+            mapaBits[i] = true;
         }
-        
-
-        this.raiz = new Directorio("Raiz", "admin");
     }
 
-    // --- GETTERS ---
-    public Directorio getRaiz() {
-        return raiz;
-    }
-
-    public int getTotalBloques() {
-        return totalBloques;
-    }
-
+    // Método para que la ventana pueda pedir y leer los bloques
     public boolean[] getMapaBits() {
         return mapaBits;
-    }
-    
-   
-    public int calcularBloquesLibres() {
-        int libres = 0;
-        for (int i = 0; i < totalBloques; i++) {
-            if (mapaBits[i]) {
-                libres++;
-            }
-        }
-        return libres;
     }
 }

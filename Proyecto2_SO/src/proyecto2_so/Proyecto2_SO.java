@@ -11,7 +11,7 @@ public class Proyecto2_SO {
 
     public static void main(String[] args) {
         // 1. Inicializamos la lógica central (El disco de 64 bloques)
-        SistemaArchivos sistema = new SistemaArchivos(64);
+        SistemaArchivos sistema = new SistemaArchivos();
         
         // 2. Iniciamos la interfaz gráfica pasándole el sistema
         java.awt.EventQueue.invokeLater(() -> {
