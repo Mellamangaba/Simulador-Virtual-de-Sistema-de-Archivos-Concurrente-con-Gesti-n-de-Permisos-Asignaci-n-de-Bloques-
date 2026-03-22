@@ -97,7 +97,7 @@ public java.util.Queue<String> getCola() {
 }
 
 public proyecto2_so.Controladores.Archivo buscarArchivoPorBloque(int numBloque) {
-    // 1. Recorremos tu lista real de archivos
+    // 1. Recorremos la lista real de archivos
     for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
         
         // 2. Calculamos el rango de bloques que ocupa ese archivo
@@ -106,7 +106,7 @@ public proyecto2_so.Controladores.Archivo buscarArchivoPorBloque(int numBloque) 
         
         // 3. ¿El bloque que estamos pintando (i) está dentro de este rango?
         if (numBloque >= inicio && numBloque < fin) {
-            return arch; // ¡Lo encontramos! Enviamos el archivo a la interfaz
+            return arch; // Enviamos el archivo a la interfaz
         }
     }
     return null; // Si nadie lo reclama, devuelve nada

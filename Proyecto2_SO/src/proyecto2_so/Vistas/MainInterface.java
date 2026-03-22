@@ -53,7 +53,7 @@ private void inicializarDiscoGrafico() {
             proyecto2_so.Controladores.Archivo arch = fs.buscarArchivoPorBloque(i);
             
             if (arch != null) {
-                // Imprime en consola para que verifiques si detecta la extensión
+                // Imprime en consola para verificar si detecta la extensión
                 System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
                 
                 // Usamos tu método de colores
@@ -316,20 +316,34 @@ private void actualizarArbol() {
     }//GEN-LAST:event_btnSimularFalloActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String nombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nombre del archivo:");
-        
-        if (nombre != null && !nombre.trim().isEmpty()) {
-            
-            int bloquesNecesarios = (int) (Math.random() * 5) + 1; 
-            
-            boolean exito = fs.crearArchivo(nombre, bloquesNecesarios);
-            
-            if (exito) {
-                actualizarVista(); 
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡Disco Lleno!");
-            }
+        String entrada = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nombre del archivo (ej: nota.txt):");
+
+    if (entrada != null && !entrada.trim().isEmpty()) {
+        String nombreFinal;
+        String extensionFinal;
+
+       
+        if (entrada.contains(".")) {
+            int ultimoPunto = entrada.lastIndexOf(".");
+            nombreFinal = entrada.substring(0, ultimoPunto);
+            extensionFinal = entrada.substring(ultimoPunto); 
+        } else {
+            nombreFinal = entrada;
+            extensionFinal = ".txt"; 
         }
+
+        int bloquesNecesarios = (int) (Math.random() * 5) + 1;
+
+        
+        boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios);
+
+        if (exito) {
+            actualizarVista();
+            actualizarArbol();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡Disco Lleno!");
+        }
+    }
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -355,7 +369,7 @@ private void actualizarArbol() {
     int filaSeleccionada = tablaAsignacion.getSelectedRow();
     
     if (filaSeleccionada != -1) {
-        // 2. Obtenemos el nombre actual de la columna 0 de tu tabla
+        // 2. Obtenemos el nombre actual de la columna 0 de la tabla
         String nombreActual = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
         
         // 3. Pedimos el nuevo nombre
@@ -432,10 +446,12 @@ private java.awt.Color obtenerColorPorExtension(String ext) {
     String e = ext.toLowerCase();
     
     if (e.contains("txt")) return new java.awt.Color(102, 178, 255); // Azul
-    if (e.contains("pdf")) return new java.awt.Color(255, 102, 102); // Rojo suave
+    if (e.contains("pdf")) return new java.awt.Color(254, 162, 142); 
     if (e.contains("jpg") || e.contains("png")) return new java.awt.Color(102, 255, 102); // Verde
     
-    return java.awt.Color.ORANGE; // Si no es ninguno, ponlo NARANJA para saber que falló la extensión
+    return java.awt.Color.ORANGE; // Si no es ninguno, NARANJA para saber que falló la extensión
 
 }
+
+    
 }

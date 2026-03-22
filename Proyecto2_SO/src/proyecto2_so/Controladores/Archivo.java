@@ -9,9 +9,17 @@ public class Archivo {
 
     public Archivo(String nombre, int bloques) {
         this.nombre = nombre;
-        this.extension = "txt"; 
+        if (nombre != null && nombre.contains(".")) {
+    // Sacamos solo lo que está después del punto
+    this.extension = nombre.substring(nombre.lastIndexOf(".") + 1); 
+} else {
+    // Si no pusiste punto, le dejamos "txt" por defecto
+    this.extension = "txt";
+}
         this.bloques = bloques;
         this.tamanio = bloques * 4; 
+        
+        
     }
 
     public String getNombre() {
