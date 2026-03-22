@@ -144,6 +144,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
 
         tablaAsignacion.setBackground(new java.awt.Color(43, 45, 48));
         tablaAsignacion.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tablaAsignacion.setForeground(new java.awt.Color(255, 255, 255));
         tablaAsignacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -279,8 +280,11 @@ private java.awt.Color obtenerColorExtension(String ext) {
 private void actualizarTabla() {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
         modelo.setRowCount(0); 
+        
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
-            modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), arch.getTamaño() + " KB"});
+            String primerBloque = arch.getBloquesAsignados().isEmpty() ? "N/A" : "Bloque " + arch.getBloquesAsignados().get(0);
+            
+            modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), primerBloque});
         }
     }
 private void actualizarArbol() {
@@ -318,49 +322,59 @@ private void actualizarArbol() {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String entrada = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nombre del archivo (ej: nota.txt):");
 
-    if (entrada != null && !entrada.trim().isEmpty()) {
-        String nombreFinal;
-        String extensionFinal;
+        if (entrada != null && !entrada.trim().isEmpty()) {
+            
+            String strBloques = javax.swing.JOptionPane.showInputDialog(this, "¿Cuántos bloques necesita este archivo?");
+            
+            if (strBloques != null && !strBloques.trim().isEmpty()) {
+                try {
+                    int bloquesNecesarios = Integer.parseInt(strBloques);
+                    
+                    String nombreFinal;
+                    String extensionFinal;
+                    if (entrada.contains(".")) {
+                        int ultimoPunto = entrada.lastIndexOf(".");
+                        nombreFinal = entrada.substring(0, ultimoPunto);
+                        extensionFinal = entrada.substring(ultimoPunto); 
+                    } else {
+                        nombreFinal = entrada;
+                        extensionFinal = ".txt"; 
+                    }
 
-       
-        if (entrada.contains(".")) {
-            int ultimoPunto = entrada.lastIndexOf(".");
-            nombreFinal = entrada.substring(0, ultimoPunto);
-            extensionFinal = entrada.substring(ultimoPunto); 
-        } else {
-            nombreFinal = entrada;
-            extensionFinal = ".txt"; 
+                    boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios);
+
+                    if (exito) {
+                        actualizarVista(); 
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡No hay espacio suficiente en el disco!");
+                    }
+                    
+                } catch (NumberFormatException e) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error: Por favor, ingresa solo números para la cantidad de bloques.");
+                }
+            }
         }
-
-        int bloquesNecesarios = (int) (Math.random() * 5) + 1;
-
-        
-        boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios);
-
-        if (exito) {
-            actualizarVista();
-            actualizarArbol();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡Disco Lleno!");
-        }
-    }
+    
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         int filaSeleccionada = tablaAsignacion.getSelectedRow();
-        
+
         if (filaSeleccionada >= 0) {
             String nombreArchivo = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
             
-            boolean exito = fs.eliminarArchivo(nombreArchivo);
+            boolean borrado = fs.eliminarArchivo(nombreArchivo);
             
-            if (exito) {
+            if (borrado) {
                 actualizarVista(); 
+                
+                javax.swing.JOptionPane.showMessageDialog(this, "¡Archivo '" + nombreArchivo + "' eliminado con éxito!");
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo en la tabla primero.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo en la TABLA de la derecha antes de darle a Eliminar.");
         }
+    
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
