@@ -49,21 +49,16 @@ private void inicializarDiscoGrafico() {
         bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
 
         if (mapa[i]) {
-            // Buscamos qué archivo ocupa este bloque 'i'
             proyecto2_so.Controladores.Archivo arch = fs.buscarArchivoPorBloque(i);
             
             if (arch != null) {
-                // Imprime en consola para verificar si detecta la extensión
                 System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
                 
-                // Usamos tu método de colores
                 bloque.setBackground(obtenerColorPorExtension(arch.getExtension()));
             } else {
-                // Si el mapa de bits dice que está ocupado pero no hay archivo (Rojo Error)
                 bloque.setBackground(new java.awt.Color(231, 76, 60));
             }
         } else {
-            // Bloque vacío (Gris oscuro)
             bloque.setBackground(new java.awt.Color(54, 57, 63));
         }
 
@@ -76,18 +71,19 @@ public void actualizarVista() {
         inicializarDiscoGrafico();
         actualizarTabla();
         actualizarArbol(); 
+        actualizarCola();
     }
 
 private java.awt.Color obtenerColorExtension(String ext) {
     if (ext == null) return java.awt.Color.WHITE;
     
     switch (ext.toLowerCase()) {
-        case ".txt": return new java.awt.Color(100, 150, 255); // Azul
-        case ".pdf": return new java.awt.Color(255, 100, 100); // Rojo
+        case ".txt": return new java.awt.Color(100, 150, 255); 
+        case ".pdf": return new java.awt.Color(255, 100, 100);
         case ".jpg":
-        case ".png": return new java.awt.Color(100, 255, 100); // Verde
-        case ".docx": return new java.awt.Color(200, 100, 255); // Morado
-        default: return java.awt.Color.GRAY; // Otros
+        case ".png": return new java.awt.Color(100, 255, 100); 
+        case ".docx": return new java.awt.Color(200, 100, 255); 
+        default: return java.awt.Color.GRAY; 
     }
 
     
@@ -122,6 +118,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jScrollPane4 = new javax.swing.JScrollPane();
         txtCola = new javax.swing.JTextArea();
         lblCabezal = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
@@ -207,6 +204,9 @@ private java.awt.Color obtenerColorExtension(String ext) {
         lblCabezal.setForeground(new java.awt.Color(255, 255, 255));
         lblCabezal.setText("Posición del Cabezal: 0");
 
+        jButton5.setText("Ejecutar Siguiente Proceso");
+        jButton5.addActionListener(this::jButton5ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -241,11 +241,16 @@ private java.awt.Color obtenerColorExtension(String ext) {
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(panelDisco, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(63, 63, 63)
+                        .addComponent(jButton5)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -256,7 +261,8 @@ private java.awt.Color obtenerColorExtension(String ext) {
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(jButton4)
+                    .addComponent(jButton5))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(5, 5, 5)
@@ -326,6 +332,15 @@ private void actualizarTabla() {
             modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), primerBloque});
         }
     }
+private void actualizarCola() {
+        txtCola.setText(""); 
+        
+        for (proyecto2_so.Modelos.Proceso p : fs.getColaProcesos()) {
+            txtCola.append(p.toString() + "\n");
+        }
+        
+        lblCabezal.setText("Posición del Cabezal: " + fs.getPosicionCabezal());
+    }
 public void agregarLog(String mensaje) {
         java.time.LocalTime hora = java.time.LocalTime.now();
         java.time.format.DateTimeFormatter formato = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -337,7 +352,6 @@ private void actualizarArbol() {
         java.util.HashMap<String, javax.swing.tree.DefaultMutableTreeNode> mapaNodos = new java.util.HashMap<>();
         mapaNodos.put("Disco Local /", raiz);
 
-        // 1. Primero colgamos las CARPETAS
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
             if (arch.isEsDirectorio()) {
                 javax.swing.tree.DefaultMutableTreeNode nodoCarpeta = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
@@ -349,7 +363,6 @@ private void actualizarArbol() {
             }
         }
 
-        // 2. Luego metemos los ARCHIVOS dentro de sus carpetas
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
             if (!arch.isEsDirectorio()) {
                 javax.swing.tree.DefaultMutableTreeNode nodoArchivo = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
@@ -404,8 +417,19 @@ private void actualizarArbol() {
                     String carpetaDestino = obtenerCarpetaSeleccionada();
                     boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios, carpetaDestino);
                     if (exito) {
+                        int primerBloque = -1;
+                        for(proyecto2_so.Controladores.Archivo a : fs.getListaArchivos()){
+                            if(a.getNombre().equals(nombreFinal)){
+                                primerBloque = a.getBloquesAsignados().get(0);
+                            }
+                        }
+                        
+                        proyecto2_so.Modelos.Proceso nuevoProc = new proyecto2_so.Modelos.Proceso("P_Escritura", "Guardar " + nombreFinal, primerBloque);
+                        fs.agregarProceso(nuevoProc);
+                        
                         actualizarVista(); 
-                        agregarLog("Éxito: Se creó el archivo '" + nombreFinal + extensionFinal + "' ocupando " + bloquesNecesarios + " bloques.");
+                        agregarLog("Proceso encolado: Escribir archivo '" + nombreFinal + "'.");
+                    
                     } else {
                         javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡No hay espacio suficiente en el disco!");
                     }
@@ -424,7 +448,8 @@ private void actualizarArbol() {
 
         if (filaSeleccionada >= 0) {
             String nombreArchivo = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
-            
+            proyecto2_so.Modelos.Proceso nuevoProc = new proyecto2_so.Modelos.Proceso("P_Borrado", "Eliminar " + nombreArchivo, 0);
+            fs.agregarProceso(nuevoProc);
             boolean borrado = fs.eliminarArchivo(nombreArchivo);
             
             if (borrado) {
@@ -502,6 +527,31 @@ private void actualizarArbol() {
         agregarLog("Éxito: Se creó la carpeta '" + nombreCarpeta + "' en " + carpetaDestino);
     }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        String planificador = jComboBox2.getSelectedItem().toString();
+        
+        if (planificador.equals("Seleccionar")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un Planificador (ej: FIFO) arriba.");
+            return;
+        }
+
+        proyecto2_so.Modelos.Proceso procesoActual = fs.obtenerSiguienteProceso();
+        
+        if (procesoActual != null) {
+            int posicionAnterior = fs.getPosicionCabezal();
+            int posicionNueva = procesoActual.getBloqueDestino();
+            int distancia = Math.abs(posicionAnterior - posicionNueva); 
+            
+            fs.setPosicionCabezal(posicionNueva);
+            
+            actualizarVista();
+            agregarLog("💿 " + planificador + ": Ejecutando [" + procesoActual.getOperacion() + "]. Cabezal se movió del " + posicionAnterior + " al " + posicionNueva + " (Saltó " + distancia + " bloques).");
+            
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No hay procesos pendientes en la cola.");
+        }
+    }//GEN-LAST:event_jButton5ActionPerformed
 private String obtenerCarpetaSeleccionada() {
         javax.swing.tree.DefaultMutableTreeNode nodo = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
         if (nodo != null) {
@@ -513,7 +563,7 @@ private String obtenerCarpetaSeleccionada() {
                 if (nodoPadre != null) return nodoPadre.getUserObject().toString();
             }
         }
-        return "Disco Local /"; // Carpeta por defecto
+        return "Disco Local /"; 
     }
     /**
      * @param args the command line arguments
@@ -552,6 +602,7 @@ private String obtenerCarpetaSeleccionada() {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
@@ -573,15 +624,13 @@ private String obtenerCarpetaSeleccionada() {
 private java.awt.Color obtenerColorPorExtension(String ext) {
     if (ext == null) return java.awt.Color.GRAY;
     
-    // Convertimos a minúsculas para que no importe si es .TXT o .txt
     String e = ext.toLowerCase();
     
-    if (e.contains("txt")) return new java.awt.Color(102, 178, 255); // Azul
+    if (e.contains("txt")) return new java.awt.Color(102, 178, 255); 
     if (e.contains("pdf")) return new java.awt.Color(254, 162, 142); 
-    if (e.contains("jpg") || e.contains("png")) return new java.awt.Color(102, 255, 102); // Verde
+    if (e.contains("jpg") || e.contains("png")) return new java.awt.Color(102, 255, 102); 
     
-    return java.awt.Color.ORANGE; // Si no es ninguno, NARANJA para saber que falló la extensión
-
+    return java.awt.Color.ORANGE; 
 }
 
     
