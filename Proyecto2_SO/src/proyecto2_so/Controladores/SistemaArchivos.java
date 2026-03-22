@@ -126,5 +126,28 @@ public class SistemaArchivos {
     public void setPosicionCabezal(int nuevaPosicion) {
         this.posicionCabezal = nuevaPosicion;
     }
+    public Proceso obtenerSiguienteProcesoSSTF() {
+        if (colaProcesos.isEmpty()) {
+            return null;
+        }
+
+        Proceso masCercano = null;
+        int minimaDistancia = Integer.MAX_VALUE;
+
+        for (Proceso p : colaProcesos) {
+            int distancia = Math.abs(p.getBloqueDestino() - posicionCabezal);
+            
+            if (distancia < minimaDistancia) {
+                minimaDistancia = distancia;
+                masCercano = p;
+            }
+        }
+
+        if (masCercano != null) {
+            colaProcesos.remove(masCercano);
+        }
+        
+        return masCercano;
+    }
 
 }
