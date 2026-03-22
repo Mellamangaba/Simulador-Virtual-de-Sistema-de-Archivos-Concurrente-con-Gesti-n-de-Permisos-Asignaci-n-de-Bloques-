@@ -119,6 +119,8 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtLog = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(30, 33, 36));
@@ -133,6 +135,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jLabel2.setText("Planificador:");
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Administrador", "Usuario" }));
+        jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "FIFO", "SSTF", "SCAN", "C-SCAN" }));
 
@@ -256,6 +259,10 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jLabel3.setBackground(new java.awt.Color(43, 45, 48));
         jLabel3.setText("Log de Eventos");
 
+        txtLog.setColumns(20);
+        txtLog.setRows(5);
+        jScrollPane1.setViewportView(txtLog);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -263,7 +270,8 @@ private java.awt.Color obtenerColorExtension(String ext) {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -272,7 +280,9 @@ private java.awt.Color obtenerColorExtension(String ext) {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
-                .addGap(114, 114, 114))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10))
         );
 
         pack();
@@ -286,6 +296,12 @@ private void actualizarTabla() {
             
             modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), primerBloque});
         }
+    }
+public void agregarLog(String mensaje) {
+        java.time.LocalTime hora = java.time.LocalTime.now();
+        java.time.format.DateTimeFormatter formato = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
+        
+        txtLog.append("[" + hora.format(formato) + "] " + mensaje + "\n");
     }
 private void actualizarArbol() {
         javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("Disco Local/");
@@ -345,6 +361,7 @@ private void actualizarArbol() {
 
                     if (exito) {
                         actualizarVista(); 
+                        agregarLog("Éxito: Se creó el archivo '" + nombreFinal + extensionFinal + "' ocupando " + bloquesNecesarios + " bloques.");
                     } else {
                         javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡No hay espacio suficiente en el disco!");
                     }
@@ -368,7 +385,7 @@ private void actualizarArbol() {
             
             if (borrado) {
                 actualizarVista(); 
-                
+                agregarLog("Éxito: Se eliminó el archivo '" + nombreArchivo + "' y se liberaron sus bloques.");
                 javax.swing.JOptionPane.showMessageDialog(this, "¡Archivo '" + nombreArchivo + "' eliminado con éxito!");
             }
         } else {
@@ -378,31 +395,57 @@ private void actualizarArbol() {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-                                        
-    // 1. Preguntamos qué archivo de la tabla quiere renombrar
-    int filaSeleccionada = tablaAsignacion.getSelectedRow();
-    
-    if (filaSeleccionada != -1) {
-        // 2. Obtenemos el nombre actual de la columna 0 de la tabla
-        String nombreActual = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
+        int filaSeleccionada = tablaAsignacion.getSelectedRow();
         
-        // 3. Pedimos el nuevo nombre
-        String nuevoNombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nuevo nombre para: " + nombreActual);
-        
-        if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
-            // 4. Llamamos a la lógica
-            if (fs.renombrarArchivo(nombreActual, nuevoNombre)) {
-                actualizarVista(); // Refrescamos Árbol y Tabla
-                javax.swing.JOptionPane.showMessageDialog(this, "¡Archivo renombrado con éxito!");
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Error al renombrar.");
+        if (filaSeleccionada >= 0) {
+            String nombreActual = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
+            String extensionActual = tablaAsignacion.getValueAt(filaSeleccionada, 1).toString(); // Sacamos la extensión
+            
+            String nuevoNombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nuevo nombre para '" + nombreActual + "':");
+            
+            if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
+                
+                if (!nuevoNombre.contains(".")) {
+                    nuevoNombre = nuevoNombre + extensionActual;
+                }
+                
+                boolean exito = fs.renombrarArchivo(nombreActual, nuevoNombre);
+                
+                if (exito) {
+                    actualizarVista();
+                    agregarLog("Modificación: Archivo '" + nombreActual + "' renombrado a '" + nuevoNombre + "'.");
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error al renombrar el archivo.");
+                }
             }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo en la TABLA primero.");
         }
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un archivo de la tabla primero.");
-    }
-
+    
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        String modoSeleccionado = jComboBox1.getSelectedItem().toString();
+        
+        if (modoSeleccionado.equals("Usuario")) {
+            jButton1.setEnabled(false); 
+            jButton2.setEnabled(false); 
+            jButton3.setEnabled(false); 
+            jButton4.setEnabled(false); 
+            
+            agregarLog("🔐 Permisos cambiados: Modo USUARIO (Solo Lectura).");
+            
+        } 
+        else if (modoSeleccionado.equals("Administrador")) {
+            jButton1.setEnabled(true);  
+            jButton2.setEnabled(true);  
+            jButton3.setEnabled(true);  
+            jButton4.setEnabled(true);  
+            
+            agregarLog("🔓 Permisos cambiados: Modo ADMINISTRADOR (Control Total).");
+        }
+    
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -447,10 +490,12 @@ private void actualizarArbol() {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel panelDisco;
     private javax.swing.JTable tablaAsignacion;
+    private javax.swing.JTextArea txtLog;
     // End of variables declaration//GEN-END:variables
 
 private java.awt.Color obtenerColorPorExtension(String ext) {
