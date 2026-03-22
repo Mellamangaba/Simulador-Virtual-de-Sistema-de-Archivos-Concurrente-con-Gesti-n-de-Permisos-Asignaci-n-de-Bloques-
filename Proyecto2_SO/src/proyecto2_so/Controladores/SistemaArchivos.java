@@ -1,16 +1,20 @@
 package proyecto2_so.Controladores;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class SistemaArchivos {
 
     private boolean[] mapaBits;
-    private java.util.ArrayList<Archivo> listaArchivos;
-    private java.util.Queue<String> colaProcesos = new java.util.LinkedList<>();
+    private ArrayList<Archivo> listaArchivos;
+    private Queue<String> colaProcesos;
 
     public SistemaArchivos() {
-        listaArchivos = new java.util.ArrayList<>();
+        listaArchivos = new ArrayList<>();
+        colaProcesos = new LinkedList<>();
         mapaBits = new boolean[100];
         
-
         for (int i = 0; i < 100; i++) {
             mapaBits[i] = true;
         }
@@ -20,7 +24,7 @@ public class SistemaArchivos {
         return mapaBits;
     }
 
-    public boolean crearArchivo(String nombre, int cantidadBloques) {
+    public boolean crearArchivo(String nombre, int cantidadBloques, String padre) {
         int bloquesLibres = 0;
         for (int i = 0; i < 100; i++) {
             if (mapaBits[i]) { 
@@ -32,12 +36,12 @@ public class SistemaArchivos {
             return false; 
         }
 
-        proyecto2_so.Controladores.Archivo nuevoArchivo = new proyecto2_so.Controladores.Archivo(nombre, cantidadBloques);
+        Archivo nuevoArchivo = new Archivo(nombre, cantidadBloques, padre);
         
         int bloquesAsignados = 0;
         for (int i = 0; i < 100 && bloquesAsignados < cantidadBloques; i++) {
             if (mapaBits[i]) {
-                mapaBits[i] = false;
+                mapaBits[i] = false; 
                 nuevoArchivo.getBloquesAsignados().add(i); 
                 bloquesAsignados++;
             }
@@ -47,14 +51,20 @@ public class SistemaArchivos {
         return true; 
     }
 
-    public java.util.ArrayList<Archivo> getListaArchivos() {
+    public boolean crearDirectorio(String nombre, String padre) {
+        Archivo nuevaCarpeta = new Archivo(nombre, padre);
+        listaArchivos.add(nuevaCarpeta);
+        return true; 
+    }
+
+    public ArrayList<Archivo> getListaArchivos() {
         return listaArchivos;
     }
 
     public boolean eliminarArchivo(String nombre) {
-        proyecto2_so.Controladores.Archivo archivoABorrar = null;
+        Archivo archivoABorrar = null;
         
-        for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
+        for (Archivo arch : listaArchivos) {
             if (arch.getNombre().equals(nombre)) {
                 archivoABorrar = arch;
                 break;
@@ -62,11 +72,14 @@ public class SistemaArchivos {
         }
         
         if (archivoABorrar != null) {
-            for (Integer numBloque : archivoABorrar.getBloquesAsignados()) {
-                mapaBits[numBloque] = true; 
+            
+            if (!archivoABorrar.isEsDirectorio()) {
+                for (Integer numBloque : archivoABorrar.getBloquesAsignados()) {
+                    mapaBits[numBloque] = true; // Volvemos el bloque a estado "libre"
+                }
             }
             
-            listaArchivos.remove(archivoABorrar);
+            listaArchivos.remove(archivoABorrar); // Lo sacamos de la memoria
             return true;
         }
         
@@ -74,7 +87,7 @@ public class SistemaArchivos {
     }
 
     public boolean renombrarArchivo(String nombreViejo, String nombreNuevo) {
-        for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
+        for (Archivo arch : listaArchivos) {
             if (arch.getNombre().equals(nombreViejo)) {
                 arch.setNombre(nombreNuevo);
                 return true; 
@@ -91,17 +104,17 @@ public class SistemaArchivos {
         return colaProcesos.poll(); 
     }
 
-    public java.util.Queue<String> getCola() {
+    public Queue<String> getCola() {
         return colaProcesos;
     }
 
-    public proyecto2_so.Controladores.Archivo buscarArchivoPorBloque(int numBloque) {
-        for (proyecto2_so.Controladores.Archivo arch : listaArchivos) {
-            if (arch.getBloquesAsignados() != null && arch.getBloquesAsignados().contains(numBloque)) {
+    public Archivo buscarArchivoPorBloque(int numBloque) {
+        for (Archivo arch : listaArchivos) {
+            if (!arch.isEsDirectorio() && arch.getBloquesAsignados() != null && arch.getBloquesAsignados().contains(numBloque)) {
                 return arch; 
             }
         }
         return null; 
     }
 
-}   
+}

@@ -185,6 +185,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setText("Crear Directorio");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         jButton3.setText("Eliminar");
         jButton3.addActionListener(this::jButton3ActionPerformed);
@@ -304,23 +305,38 @@ public void agregarLog(String mensaje) {
         txtLog.append("[" + hora.format(formato) + "] " + mensaje + "\n");
     }
 private void actualizarArbol() {
-        javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("Disco Local/");
+        javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("Disco Local /");
+        java.util.HashMap<String, javax.swing.tree.DefaultMutableTreeNode> mapaNodos = new java.util.HashMap<>();
+        mapaNodos.put("Disco Local /", raiz);
 
+        // 1. Primero colgamos las CARPETAS
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
-            javax.swing.tree.DefaultMutableTreeNode nodoArchivo = 
-                new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre() + "." + arch.getExtension());
-            
-            raiz.add(nodoArchivo);
+            if (arch.isEsDirectorio()) {
+                javax.swing.tree.DefaultMutableTreeNode nodoCarpeta = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
+                nodoCarpeta.setAllowsChildren(true); 
+                mapaNodos.put(arch.getNombre(), nodoCarpeta);
+                
+                javax.swing.tree.DefaultMutableTreeNode nodoPadre = mapaNodos.getOrDefault(arch.getPadre(), raiz);
+                nodoPadre.add(nodoCarpeta);
+            }
         }
 
-        javax.swing.tree.DefaultTreeModel modeloArbol = new javax.swing.tree.DefaultTreeModel(raiz);
-        arbolArchivos.setModel(modeloArbol);
-        
-        arbolArchivos.updateUI();
+        // 2. Luego metemos los ARCHIVOS dentro de sus carpetas
+        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+            if (!arch.isEsDirectorio()) {
+                javax.swing.tree.DefaultMutableTreeNode nodoArchivo = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
+                nodoArchivo.setAllowsChildren(false); 
+                
+                javax.swing.tree.DefaultMutableTreeNode nodoPadre = mapaNodos.getOrDefault(arch.getPadre(), raiz);
+                nodoPadre.add(nodoArchivo);
+            }
+        }
+
+        arbolArchivos.setModel(new javax.swing.tree.DefaultTreeModel(raiz));
         for (int i = 0; i < arbolArchivos.getRowCount(); i++) {
             arbolArchivos.expandRow(i);
         }
- }
+    }
     private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
         int bloqueAlAzar = (int) (Math.random() * 10);
     
@@ -357,8 +373,8 @@ private void actualizarArbol() {
                         extensionFinal = ".txt"; 
                     }
 
-                    boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios);
-
+                    String carpetaDestino = obtenerCarpetaSeleccionada();
+                    boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios, carpetaDestino);
                     if (exito) {
                         actualizarVista(); 
                         agregarLog("Éxito: Se creó el archivo '" + nombreFinal + extensionFinal + "' ocupando " + bloquesNecesarios + " bloques.");
@@ -447,6 +463,30 @@ private void actualizarArbol() {
     
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    String carpetaDestino = obtenerCarpetaSeleccionada();
+    
+    String nombreCarpeta = javax.swing.JOptionPane.showInputDialog(this, "Crear nueva carpeta dentro de '" + carpetaDestino + "':");
+    
+    if (nombreCarpeta != null && !nombreCarpeta.trim().isEmpty()) {
+        fs.crearDirectorio(nombreCarpeta, carpetaDestino);
+        actualizarVista();
+        agregarLog("Éxito: Se creó la carpeta '" + nombreCarpeta + "' en " + carpetaDestino);
+    }
+    }//GEN-LAST:event_jButton2ActionPerformed
+private String obtenerCarpetaSeleccionada() {
+        javax.swing.tree.DefaultMutableTreeNode nodo = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
+        if (nodo != null) {
+            String nombre = nodo.getUserObject().toString();
+            if (!nombre.contains(".")) { 
+                return nombre; 
+            } else {
+                javax.swing.tree.DefaultMutableTreeNode nodoPadre = (javax.swing.tree.DefaultMutableTreeNode) nodo.getParent();
+                if (nodoPadre != null) return nodoPadre.getUserObject().toString();
+            }
+        }
+        return "Disco Local /"; // Carpeta por defecto
+    }
     /**
      * @param args the command line arguments
      */
