@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import proyecto2_so.Modelos.Proceso; 
 
+
 public class SistemaArchivos {
 
     private boolean[] mapaBits;
@@ -12,6 +13,8 @@ public class SistemaArchivos {
     
     private Queue<Proceso> colaProcesos;
     private int posicionCabezal; 
+    
+    private boolean moviendoHaciaArriba = true;
 
     public SistemaArchivos() {
         listaArchivos = new ArrayList<>();
@@ -130,6 +133,8 @@ public class SistemaArchivos {
         if (colaProcesos.isEmpty()) {
             return null;
         }
+        
+    
 
         Proceso masCercano = null;
         int minimaDistancia = Integer.MAX_VALUE;

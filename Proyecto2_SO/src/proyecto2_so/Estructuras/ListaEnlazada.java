@@ -55,4 +55,18 @@ public class ListaEnlazada<T> {
         head = null;
         size = 0;
     }
+
+public void remove(int index) {
+    if (index < 0 || index >= size) return;
+    if (index == 0) {
+        head = head.getNext();
+    } else {
+        Nodo<T> current = head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current.getNext();
+        }
+        current.setNext(current.getNext().getNext());
+    }
+    size--;
+}
 }
