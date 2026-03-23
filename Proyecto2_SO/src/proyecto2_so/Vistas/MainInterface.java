@@ -530,36 +530,46 @@ private void actualizarArbol() {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         String planificador = jComboBox2.getSelectedItem().toString();
-        
-        if (planificador.equals("Seleccionar")) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un Planificador (ej: SSTF) arriba.");
-            return;
-        }
+    
+    if (planificador.equals("Seleccionar")) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, selecciona un Planificador arriba.");
+        return;
+    }
 
-        proyecto2_so.Modelos.Proceso procesoActual = null;
+    proyecto2_so.Modelos.Proceso procesoActual = null;
 
-        if (planificador.equals("FIFO")) {
-            procesoActual = fs.obtenerSiguienteProceso();
-        } else if (planificador.equals("SSTF")) {
-            procesoActual = fs.obtenerSiguienteProcesoSSTF(); 
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Aún no programamos " + planificador + ", ¡pero pronto lo haremos!");
-            return;
-        }
+    // Aquí añadimos las conexiones a los nuevos métodos que creamos
+    if (planificador.equals("FIFO")) {
+        procesoActual = fs.obtenerSiguienteProceso();
+    } else if (planificador.equals("SSTF")) {
+        procesoActual = fs.obtenerSiguienteProcesoSSTF(); 
+    } else if (planificador.equals("SCAN")) {
+        procesoActual = fs.obtenerSiguienteProcesoSCAN(); // <--- CONECTADO
+    } else if (planificador.equals("C-SCAN")) {
+        procesoActual = fs.obtenerSiguienteProcesoCSCAN(); // <--- CONECTADO
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Algoritmo " + planificador + " no reconocido.");
+        return;
+    }
+    
+    if (procesoActual != null) {
+        int posicionAnterior = fs.getPosicionCabezal();
+        int posicionNueva = procesoActual.getBloqueDestino();
+        int distancia = Math.abs(posicionAnterior - posicionNueva); 
         
-        if (procesoActual != null) {
-            int posicionAnterior = fs.getPosicionCabezal();
-            int posicionNueva = procesoActual.getBloqueDestino();
-            int distancia = Math.abs(posicionAnterior - posicionNueva); 
-            
-            fs.setPosicionCabezal(posicionNueva); 
-            
-            actualizarVista();
-            agregarLog("💿 [" + planificador + "] Ejecutando: " + procesoActual.getOperacion() + ". Cabezal saltó del " + posicionAnterior + " al " + posicionNueva + " (Distancia: " + distancia + ").");
-            
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "No hay procesos pendientes en la cola.");
-        }
+        fs.setPosicionCabezal(posicionNueva); 
+        
+        actualizarVista();
+        
+        // El log ahora mostrará el nombre del algoritmo que estés usando
+        agregarLog("💿 [" + planificador + "] Ejecutando: " + procesoActual.getOperacion() 
+                   + ". Cabezal saltó del " + posicionAnterior + " al " + posicionNueva 
+                   + " (Distancia: " + distancia + ").");
+        
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "No hay procesos pendientes en la cola.");
+    }
+
     }//GEN-LAST:event_jButton5ActionPerformed
 private String obtenerCarpetaSeleccionada() {
         javax.swing.tree.DefaultMutableTreeNode nodo = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
