@@ -4,48 +4,81 @@
  */
 package proyecto2_so.Modelos;
 
-
-import proyecto2_so.Estructuras.ListaEnlazada;
+import proyecto2_so.Estructuras.ListaSimple;
 
 public class Archivo {
     private String nombre;
-    private String dueño; 
-    private int tamañoEnBloques;
-    private int bloqueInicio;
+    private String extension;
+    private int bloques;
+    private int tamanio; 
+    private ListaSimple<Integer> bloquesAsignados; 
     
-   
-    private ListaEnlazada<Integer> bloquesAsignados;
+    private boolean esDirectorio;
+    private String padre;
 
-
-    public Archivo(String nombre, String dueño, int tamañoEnBloques) {
+    public Archivo(String nombre, int bloques, String padre) {
         this.nombre = nombre;
-        this.dueño = dueño;
-        this.tamañoEnBloques = tamañoEnBloques;
-        this.bloquesAsignados = new ListaEnlazada<>(); 
+        this.extension = "txt"; 
+        this.bloques = bloques;
+        this.tamanio = bloques * 4; 
+        this.bloquesAsignados = new ListaSimple<>(); 
+        this.esDirectorio = false; 
+        this.padre = padre; 
     }
 
-    // Getters y Setters
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
+    public Archivo(String nombre, String padre) {
         this.nombre = nombre;
+        this.extension = ""; 
+        this.bloques = 0; 
+        this.tamanio = 0;
+        this.bloquesAsignados = new ListaSimple<>();
+        this.esDirectorio = true; 
+        this.padre = padre;
     }
 
-    public String getDueño() {
-        return dueño;
+    public String getNombre() { return nombre; }
+    public String getExtension() { return extension; }
+    public int getBloques() { return bloques; }
+    public int getTamaño() { return tamanio; }
+    public ListaSimple<Integer> getBloquesAsignados() { return bloquesAsignados; } 
+    public void setNombre(String nuevoNombre) { this.nombre = nuevoNombre; }
+    public boolean isEsDirectorio() { return esDirectorio; }
+    public String getPadre() { return padre; }
+
+    private int cantidadLectores = 0;
+    private boolean estaEscribiendo = false;
+
+    public synchronized boolean intentarLockLectura() {
+        if (estaEscribiendo) {
+            return false; 
+        }
+        cantidadLectores++;
+        return true;
     }
 
-    public int getTamañoEnBloques() {
-        return tamañoEnBloques;
+    public synchronized void liberarLockLectura() {
+        if (cantidadLectores > 0) {
+            cantidadLectores--;
+        }
+        notifyAll(); 
     }
 
-    public ListaEnlazada<Integer> getBloquesAsignados() {
-        return bloquesAsignados;
+    public synchronized boolean intentarLockEscritura() {
+        if (cantidadLectores > 0 || estaEscribiendo) {
+            return false; 
+        }
+        estaEscribiendo = true;
+        return true;
     }
-    
-    public int getBloqueInicio() {
-    return bloqueInicio; 
-}
+
+    public synchronized void liberarLockEscritura() {
+        estaEscribiendo = false;
+        notifyAll(); 
+    }
+
+    public synchronized String getEstadoLock() {
+        if (estaEscribiendo) return "Bloqueado (Escritura Exclusiva)";
+        if (cantidadLectores > 0) return "Bloqueado (Lectura Compartida x" + cantidadLectores + ")";
+        return "Libre";
+    }
 }

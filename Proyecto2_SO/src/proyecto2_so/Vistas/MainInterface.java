@@ -1,17 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package proyecto2_so.Vistas;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Controladores.SistemaArchivos;
 import proyecto2_so.Modelos.Proceso;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.DefaultListModel;
-import java.util.Queue;
 import java.awt.Color;
+
 /**
  *
  * @author sofia
@@ -21,52 +17,55 @@ public class MainInterface extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainInterface.class.getName());
     private static SistemaArchivos sistema;
     private SistemaArchivos fs;
+    
     /**
      * Creates new form MainInterface
      */
     public MainInterface(SistemaArchivos sistema) {
         initComponents();
         this.fs = sistema;
+        
+        proyecto2_so.Controladores.HiloPlanificador motor = new proyecto2_so.Controladores.HiloPlanificador(fs, this);
+        motor.start();
+        
         inicializarDiscoGrafico();
         actualizarVista();
         this.setLocationRelativeTo(null);
-        
-        
     }
 private void inicializarDiscoGrafico() {
-    panelDisco.removeAll();
-    panelDisco.setLayout(new java.awt.GridLayout(10, 10, 5, 5));
-    panelDisco.setBackground(new java.awt.Color(30, 33, 36));
+        panelDisco.removeAll();
+        panelDisco.setLayout(new java.awt.GridLayout(10, 10, 5, 5));
+        panelDisco.setBackground(new java.awt.Color(30, 33, 36));
 
-    boolean[] mapa = fs.getMapaBits();
+        boolean[] mapa = fs.getMapaBits();
 
-    for (int i = 0; i < 100; i++) {
-        javax.swing.JLabel bloque = new javax.swing.JLabel();
-        bloque.setOpaque(true);
-        bloque.setText(String.format("%02d", i));
-        bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        bloque.setForeground(java.awt.Color.WHITE);
-        bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
+        for (int i = 0; i < 200; i++) {
+            javax.swing.JLabel bloque = new javax.swing.JLabel();
+            bloque.setOpaque(true);
+            bloque.setText(String.format("%02d", i));
+            bloque.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            bloque.setForeground(java.awt.Color.WHITE);
+            bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
 
-        if (mapa[i]) {
-            proyecto2_so.Controladores.Archivo arch = fs.buscarArchivoPorBloque(i);
-            
-            if (arch != null) {
-                System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
+            if (mapa[i]) {
+                proyecto2_so.Modelos.Archivo arch = fs.buscarArchivoPorBloque(i);
                 
-                bloque.setBackground(obtenerColorPorExtension(arch.getExtension()));
+                if (arch != null) {
+                    System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
+                    
+                    bloque.setBackground(obtenerColorPorExtension(arch.getExtension()));
+                } else {
+                    bloque.setBackground(new java.awt.Color(231, 76, 60));
+                }
             } else {
-                bloque.setBackground(new java.awt.Color(231, 76, 60));
+                bloque.setBackground(new java.awt.Color(54, 57, 63));
             }
-        } else {
-            bloque.setBackground(new java.awt.Color(54, 57, 63));
-        }
 
-        panelDisco.add(bloque);
+            panelDisco.add(bloque);
+        }
+        panelDisco.revalidate();
+        panelDisco.repaint();
     }
-    panelDisco.revalidate();
-    panelDisco.repaint();
-}
 public void actualizarVista() {
         inicializarDiscoGrafico();
         actualizarTabla();
@@ -119,6 +118,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
         txtCola = new javax.swing.JTextArea();
         lblCabezal = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtLog = new javax.swing.JTextArea();
@@ -207,6 +207,9 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jButton5.setText("Ejecutar Siguiente Proceso");
         jButton5.addActionListener(this::jButton5ActionPerformed);
 
+        jButton6.setText("Cargar JSON");
+        jButton6.addActionListener(this::jButton6ActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -228,7 +231,9 @@ private java.awt.Color obtenerColorExtension(String ext) {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(457, 457, 457)
+                        .addGap(351, 351, 351)
+                        .addComponent(jButton6)
+                        .addGap(31, 31, 31)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jButton4)
@@ -257,12 +262,14 @@ private java.awt.Color obtenerColorExtension(String ext) {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2)
+                        .addComponent(jButton3)
+                        .addComponent(jButton4)
+                        .addComponent(jButton5))
+                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(5, 5, 5)
@@ -288,7 +295,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(12, Short.MAX_VALUE))))
         );
 
         jLabel3.setBackground(new java.awt.Color(43, 45, 48));
@@ -326,7 +333,8 @@ private void actualizarTabla() {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
         modelo.setRowCount(0); 
         
-        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+        for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+            proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
             if (!arch.isEsDirectorio()) { 
                 int tamanoKB = arch.getBloques() * 4;
                 String tamanoTexto = tamanoKB + " KB";
@@ -343,7 +351,8 @@ private void actualizarTabla() {
 private void actualizarCola() {
         txtCola.setText(""); 
         
-        for (proyecto2_so.Modelos.Proceso p : fs.getColaProcesos()) {
+        for (int i = 0; i < fs.getColaProcesos().tamano(); i++) {
+            proyecto2_so.Modelos.Proceso p = fs.getColaProcesos().obtener(i);
             txtCola.append(p.toString() + "\n");
         }
         
@@ -355,28 +364,40 @@ public void agregarLog(String mensaje) {
         
         txtLog.append("[" + hora.format(formato) + "] " + mensaje + "\n");
     }
+private javax.swing.tree.DefaultMutableTreeNode buscarNodo(javax.swing.tree.DefaultMutableTreeNode nodoActual, String nombreBuscado) {
+        if (nodoActual.getUserObject().toString().equals(nombreBuscado)) {
+            return nodoActual;
+        }
+        for (int i = 0; i < nodoActual.getChildCount(); i++) {
+            javax.swing.tree.DefaultMutableTreeNode encontrado = buscarNodo((javax.swing.tree.DefaultMutableTreeNode) nodoActual.getChildAt(i), nombreBuscado);
+            if (encontrado != null) return encontrado;
+        }
+        return null;
+    }
+
 private void actualizarArbol() {
         javax.swing.tree.DefaultMutableTreeNode raiz = new javax.swing.tree.DefaultMutableTreeNode("Disco Local /");
-        java.util.HashMap<String, javax.swing.tree.DefaultMutableTreeNode> mapaNodos = new java.util.HashMap<>();
-        mapaNodos.put("Disco Local /", raiz);
 
-        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+        for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+            proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
             if (arch.isEsDirectorio()) {
                 javax.swing.tree.DefaultMutableTreeNode nodoCarpeta = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
                 nodoCarpeta.setAllowsChildren(true); 
-                mapaNodos.put(arch.getNombre(), nodoCarpeta);
                 
-                javax.swing.tree.DefaultMutableTreeNode nodoPadre = mapaNodos.getOrDefault(arch.getPadre(), raiz);
+                javax.swing.tree.DefaultMutableTreeNode nodoPadre = buscarNodo(raiz, arch.getPadre());
+                if (nodoPadre == null) nodoPadre = raiz;
                 nodoPadre.add(nodoCarpeta);
             }
         }
 
-        for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
+        for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+            proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
             if (!arch.isEsDirectorio()) {
                 javax.swing.tree.DefaultMutableTreeNode nodoArchivo = new javax.swing.tree.DefaultMutableTreeNode(arch.getNombre());
                 nodoArchivo.setAllowsChildren(false); 
                 
-                javax.swing.tree.DefaultMutableTreeNode nodoPadre = mapaNodos.getOrDefault(arch.getPadre(), raiz);
+                javax.swing.tree.DefaultMutableTreeNode nodoPadre = buscarNodo(raiz, arch.getPadre());
+                if (nodoPadre == null) nodoPadre = raiz;
                 nodoPadre.add(nodoArchivo);
             }
         }
@@ -424,11 +445,14 @@ private void actualizarArbol() {
 
                     String carpetaDestino = obtenerCarpetaSeleccionada();
                     boolean exito = fs.crearArchivo(nombreFinal + extensionFinal, bloquesNecesarios, carpetaDestino);
+                    
                     if (exito) {
                         int primerBloque = -1;
-                        for(proyecto2_so.Controladores.Archivo a : fs.getListaArchivos()){
-                            if(a.getNombre().equals(nombreFinal)){
-                                primerBloque = a.getBloquesAsignados().get(0);
+                        
+                        for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+                            proyecto2_so.Modelos.Archivo a = fs.getListaArchivos().obtener(i);
+                            if (a.getNombre().equals(nombreFinal + extensionFinal)) {
+                                primerBloque = a.getBloquesAsignados().obtener(0); 
                             }
                         }
                         
@@ -447,7 +471,6 @@ private void actualizarArbol() {
                 }
             }
         }
-    
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -476,7 +499,7 @@ private void actualizarArbol() {
         
         if (filaSeleccionada >= 0) {
             String nombreActual = tablaAsignacion.getValueAt(filaSeleccionada, 0).toString();
-            String extensionActual = tablaAsignacion.getValueAt(filaSeleccionada, 1).toString(); // Sacamos la extensión
+            String extensionActual = tablaAsignacion.getValueAt(filaSeleccionada, 1).toString(); 
             
             String nuevoNombre = javax.swing.JOptionPane.showInputDialog(this, "Escribe el nuevo nombre para '" + nombreActual + "':");
             
@@ -546,15 +569,14 @@ private void actualizarArbol() {
 
     proyecto2_so.Modelos.Proceso procesoActual = null;
 
-    // Aquí añadimos las conexiones a los nuevos métodos que creamos
     if (planificador.equals("FIFO")) {
         procesoActual = fs.obtenerSiguienteProceso();
     } else if (planificador.equals("SSTF")) {
         procesoActual = fs.obtenerSiguienteProcesoSSTF(); 
     } else if (planificador.equals("SCAN")) {
-        procesoActual = fs.obtenerSiguienteProcesoSCAN(); // <--- CONECTADO
+        procesoActual = fs.obtenerSiguienteProcesoSCAN(); 
     } else if (planificador.equals("C-SCAN")) {
-        procesoActual = fs.obtenerSiguienteProcesoCSCAN(); // <--- CONECTADO
+        procesoActual = fs.obtenerSiguienteProcesoCSCAN(); 
     } else {
         javax.swing.JOptionPane.showMessageDialog(this, "Algoritmo " + planificador + " no reconocido.");
         return;
@@ -569,7 +591,6 @@ private void actualizarArbol() {
         
         actualizarVista();
         
-        // El log ahora mostrará el nombre del algoritmo que estés usando
         agregarLog("💿 [" + planificador + "] Ejecutando: " + procesoActual.getOperacion() 
                    + ". Cabezal saltó del " + posicionAnterior + " al " + posicionNueva 
                    + " (Distancia: " + distancia + ").");
@@ -579,6 +600,26 @@ private void actualizarArbol() {
     }
 
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Selecciona el archivo de prueba JSON");
+        
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Archivos JSON", "json"));
+        
+        int seleccion = fileChooser.showOpenDialog(this);
+        
+        if (seleccion == javax.swing.JFileChooser.APPROVE_OPTION) {
+            String ruta = fileChooser.getSelectedFile().getAbsolutePath();
+            
+            proyecto2_so.Controladores.ManejadorJSON.cargarArchivo(ruta, fs);
+            
+            actualizarVista();
+            agregarLog("📂 Archivo JSON cargado exitosamente. Entorno de prueba listo.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Datos cargados: Archivos en disco y procesos en cola.");
+        }
+    
+    }//GEN-LAST:event_jButton6ActionPerformed
 private String obtenerCarpetaSeleccionada() {
         javax.swing.tree.DefaultMutableTreeNode nodo = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
         if (nodo != null) {
@@ -630,6 +671,7 @@ private String obtenerCarpetaSeleccionada() {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
