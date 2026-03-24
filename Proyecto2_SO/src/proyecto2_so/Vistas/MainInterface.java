@@ -18,6 +18,7 @@ public class MainInterface extends javax.swing.JFrame {
     private static SistemaArchivos sistema;
     private SistemaArchivos fs;
     
+    private proyecto2_so.Controladores.HiloPlanificador motor;
     /**
      * Creates new form MainInterface
      */
@@ -25,8 +26,8 @@ public class MainInterface extends javax.swing.JFrame {
         initComponents();
         this.fs = sistema;
         
-        proyecto2_so.Controladores.HiloPlanificador motor = new proyecto2_so.Controladores.HiloPlanificador(fs, this);
-        motor.start();
+        this.motor = new proyecto2_so.Controladores.HiloPlanificador(fs, this);
+        this.motor.start();
         
         inicializarDiscoGrafico();
         actualizarVista();
@@ -139,6 +140,7 @@ private java.awt.Color obtenerColorExtension(String ext) {
         jComboBox1.addActionListener(this::jComboBox1ActionPerformed);
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "FIFO", "SSTF", "SCAN", "C-SCAN" }));
+        jComboBox2.addActionListener(this::jComboBox2ActionPerformed);
 
         btnSimularFallo.setBackground(new java.awt.Color(255, 153, 0));
         btnSimularFallo.setText("Simular Fallo");
@@ -620,6 +622,17 @@ private void actualizarArbol() {
         }
     
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        String algoritmoSeleccionado = jComboBox2.getSelectedItem().toString();
+        
+        if (motor != null) {
+            motor.setAlgoritmo(algoritmoSeleccionado);
+            
+            agregarLog("⚙️ Cambio de Algoritmo: Ahora usando " + algoritmoSeleccionado);
+        }
+    
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 private String obtenerCarpetaSeleccionada() {
         javax.swing.tree.DefaultMutableTreeNode nodo = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
         if (nodo != null) {
