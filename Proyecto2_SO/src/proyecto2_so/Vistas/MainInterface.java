@@ -48,17 +48,16 @@ private void inicializarDiscoGrafico() {
             bloque.setForeground(java.awt.Color.WHITE);
             bloque.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
 
-            if (mapa[i]) {
+        if (!mapa[i]) { 
                 proyecto2_so.Modelos.Archivo arch = fs.buscarArchivoPorBloque(i);
                 
                 if (arch != null) {
-                    System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
-                    
-                            bloque.setBackground(arch.getColor());                } else {
-                    bloque.setBackground(new java.awt.Color(231, 76, 60));
+                    bloque.setBackground(arch.getColor());
+                } else {
+                    bloque.setBackground(new java.awt.Color(231, 76, 60)); 
                 }
             } else {
-                bloque.setBackground(new java.awt.Color(54, 57, 63));
+                bloque.setBackground(new java.awt.Color(54, 57, 63)); 
             }
 
             panelDisco.add(bloque);
@@ -416,17 +415,41 @@ private void actualizarArbol() {
         }
     }
     private void btnSimularFalloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimularFalloActionPerformed
-        int bloqueAlAzar = (int) (Math.random() * 10);
+        String nombreCrash = "CrashFile.txt";
+        int bloquesNecesarios = 4;
+        
+        agregarLog("📝 JOURNAL: CREATE '" + nombreCrash + "' (" + bloquesNecesarios + " bloques) -> PENDIENTE");
+        
+        int bloquesAsignados = 0;
+        proyecto2_so.Estructuras.ListaSimple<Integer> bloquesTemporales = new proyecto2_so.Estructuras.ListaSimple<>();
+        
+        for (int i = 0; i < 200 && bloquesAsignados < bloquesNecesarios; i++) { 
+            if (fs.getMapaBits()[i]) {
+                fs.getMapaBits()[i] = false; 
+                bloquesTemporales.agregar(i);
+                bloquesAsignados++;
+            }
+        }
+        
+        actualizarVista();
+        
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "¡CRITICAL SYSTEM FAILURE!\nEl sistema se ha detenido antes de completar la operación.", 
+            "Fallo del Sistema", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+        agregarLog("🔄 SISTEMA REINICIANDO... Analizando Journal.");
+        
+        agregarLog("⚠️ JOURNAL: Se detectó operación PENDIENTE no confirmada. Aplicando UNDO...");
+        
+        for (int i = 0; i < bloquesTemporales.tamano(); i++) {
+            int bloqueALiberar = bloquesTemporales.obtener(i);
+            fs.getMapaBits()[bloqueALiberar] = true; 
+        }
+        
+        agregarLog("✅ JOURNAL: UNDO completado. Bloques liberados. Consistencia restaurada.");
+        actualizarVista();  
     
-    
-    fs.getMapaBits()[bloqueAlAzar] = false; 
-    
-    
-    actualizarVista();
-    
-    
-    javax.swing.JOptionPane.showMessageDialog(this, "Se ha simulado un fallo en el bloque: " + bloqueAlAzar);
-
     }//GEN-LAST:event_btnSimularFalloActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -439,6 +462,11 @@ private void actualizarArbol() {
             if (strBloques != null && !strBloques.trim().isEmpty()) {
                 try {
                     int bloquesNecesarios = Integer.parseInt(strBloques);
+                    
+                    if (bloquesNecesarios <= 0) {
+                        javax.swing.JOptionPane.showMessageDialog(this, "Error: La cantidad de bloques debe ser mayor a 0.", "Rango Inválido", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        return; 
+                    }
                     
                     String nombreFinal;
                     String extensionFinal;
@@ -471,14 +499,15 @@ private void actualizarArbol() {
                         agregarLog("Proceso encolado: Escribir archivo '" + nombreFinal + "'.");
                     
                     } else {
-                        javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡No hay espacio suficiente en el disco!");
+                        javax.swing.JOptionPane.showMessageDialog(this, "Error: ¡No hay espacio suficiente en el disco para " + bloquesNecesarios + " bloques!", "Disco Lleno", javax.swing.JOptionPane.WARNING_MESSAGE);
                     }
                     
                 } catch (NumberFormatException e) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Error: Por favor, ingresa solo números para la cantidad de bloques.");
+                    javax.swing.JOptionPane.showMessageDialog(this, "Error: Por favor, ingresa solo números enteros.", "Tipo de Dato Inválido", javax.swing.JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
+    
     
     }//GEN-LAST:event_jButton1ActionPerformed
 
