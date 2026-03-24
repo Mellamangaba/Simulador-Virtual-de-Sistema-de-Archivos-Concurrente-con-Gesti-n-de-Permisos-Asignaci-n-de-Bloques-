@@ -94,4 +94,15 @@ public class Archivo {
         if (cantidadLectores > 0) return "Bloqueado (Lectura Compartida x" + cantidadLectores + ")";
         return "Libre";
     }
+    
+    private String nombreCarpetaPadre; // Esta variable guardará el nombre del directorio
+
+// En el constructor o con un Setter:
+public void setNombreCarpetaPadre(String nombre) {
+    this.nombreCarpetaPadre = nombre;
+}
+
+public String getNombreCarpetaPadre() {
+    return (nombreCarpetaPadre == null) ? "Raíz" : nombreCarpetaPadre;
+}
 }

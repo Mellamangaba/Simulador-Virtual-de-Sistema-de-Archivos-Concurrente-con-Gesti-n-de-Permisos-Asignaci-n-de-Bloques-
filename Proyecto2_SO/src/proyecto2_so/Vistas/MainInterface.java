@@ -151,13 +151,13 @@ private java.awt.Color obtenerColorExtension(String ext) {
         tablaAsignacion.setForeground(new java.awt.Color(255, 255, 255));
         tablaAsignacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Nombre", "Extensión", "Bloques", "Tamaño"
+                "Nombre", "Extensión", "Bloques", "Tamaño", "dueño"
             }
         ));
         jScrollPane3.setViewportView(tablaAsignacion);
@@ -330,31 +330,43 @@ private java.awt.Color obtenerColorExtension(String ext) {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 private void actualizarTabla() {
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
+    javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
+    
+    // Definimos las cabeceras (incluyendo "Dueño")
+    modelo.setColumnIdentifiers(new Object[]{"Color", "Nombre", "Extensión", "Bloques", "Tamaño", "Dueño"});
+    modelo.setRowCount(0); 
+    
+    for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+        proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
         
-        modelo.setColumnIdentifiers(new Object[]{"Color", "Nombre", "Extensión", "Bloques", "Tamaño"});
-        modelo.setRowCount(0); 
-        
-        for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
-            proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
-            if (!arch.isEsDirectorio()) { 
-                int tamanoKB = arch.getBloques() * 4;
-                String tamanoTexto = tamanoKB + " KB";
-                
-                java.awt.Color c = arch.getColor();
-                String colorHex = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
-                String cuadritoColor = "<html><font size='5' color='" + colorHex + "'>███</font></html>";
-                
-                modelo.addRow(new Object[]{
-                    cuadritoColor, 
-                    arch.getNombre(), 
-                    arch.getExtension(), 
-                    arch.getBloques() + " bloques", 
-                    tamanoTexto
-                });
+        // Solo mostramos archivos en la tabla (no carpetas)
+        if (!arch.isEsDirectorio()) { 
+            int tamanoKB = arch.getBloques() * 4;
+            String tamanoTexto = tamanoKB + " KB";
+            
+            // Lógica del color
+            java.awt.Color c = arch.getColor();
+            String colorHex = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+            String cuadritoColor = "<html><font size='5' color='" + colorHex + "'>███</font></html>";
+            
+            // Obtenemos el padre (si es null o vacío, es la Raíz)
+            String dueño = arch.getPadre();
+            if (dueño == null || dueño.isEmpty() || dueño.equals("/")) {
+                dueño = "Raíz";
             }
+            
+            // Agregamos la fila con los 6 datos
+            modelo.addRow(new Object[]{
+                cuadritoColor,      // Columna 0
+                arch.getNombre(),   // Columna 1
+                arch.getExtension(),// Columna 2
+                arch.getBloques() + " bloques", // Columna 3
+                tamanoTexto,        // Columna 4
+                dueño               // Columna 5 (DUEÑO)
+            });
         }
     }
+}
 private void actualizarCola() {
         txtCola.setText(""); 
         
