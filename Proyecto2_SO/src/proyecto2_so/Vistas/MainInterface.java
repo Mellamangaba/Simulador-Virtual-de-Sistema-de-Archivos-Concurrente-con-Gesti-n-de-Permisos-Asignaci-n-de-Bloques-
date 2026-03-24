@@ -327,9 +327,17 @@ private void actualizarTabla() {
         modelo.setRowCount(0); 
         
         for (proyecto2_so.Controladores.Archivo arch : fs.getListaArchivos()) {
-            String primerBloque = arch.getBloquesAsignados().isEmpty() ? "N/A" : "Bloque " + arch.getBloquesAsignados().get(0);
-            
-            modelo.addRow(new Object[]{arch.getNombre(), arch.getExtension(), arch.getBloques(), primerBloque});
+            if (!arch.isEsDirectorio()) { 
+                int tamanoKB = arch.getBloques() * 4;
+                String tamanoTexto = tamanoKB + " KB";
+                
+                modelo.addRow(new Object[]{
+                    arch.getNombre(), 
+                    arch.getExtension(), 
+                    arch.getBloques() + " bloques", 
+                    tamanoTexto
+                });
+            }
         }
     }
 private void actualizarCola() {

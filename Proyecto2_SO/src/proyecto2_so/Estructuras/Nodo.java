@@ -5,28 +5,11 @@
 package proyecto2_so.Estructuras;
 
 public class Nodo<T> {
-    private T data;
-    private Nodo<T> next;
+    public T data;
+    public Nodo<T> next;
 
     public Nodo(T data) {
         this.data = data;
         this.next = null;
-    }
-
-    // Getters y Setters
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public Nodo<T> getNext() {
-        return next;
-    }
-
-    public void setNext(Nodo<T> next) {
-        this.next = next;
     }
 }

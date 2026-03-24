@@ -5,64 +5,72 @@
 package proyecto2_so.Estructuras;
 
 public class Cola<T> {
-    private Nodo<T> frente; 
-    private Nodo<T> fin;    
-    private int tamaño;
+    private Nodo<T> frente;
+    private Nodo<T> finalCola;
+    private int tamano;
 
     public Cola() {
         this.frente = null;
-        this.fin = null;
-        this.tamaño = 0;
+        this.finalCola = null;
+        this.tamano = 0;
     }
 
-    
     public void encolar(T data) {
-        Nodo<T> nuevoNodo = new Nodo<>(data);
+        Nodo<T> nuevo = new Nodo<>(data);
         if (estaVacia()) {
-            frente = nuevoNodo;
-            fin = nuevoNodo;
+            frente = nuevo;
         } else {
-            fin.setNext(nuevoNodo);
-            fin = nuevoNodo;
+            finalCola.next = nuevo;
         }
-        tamaño++;
+        finalCola = nuevo;
+        tamano++;
     }
 
-    
     public T desencolar() {
-        if (estaVacia()) {
-            return null; 
-        }
-        T data = frente.getData();
-        frente = frente.getNext();
-        
-    
+        if (estaVacia()) return null;
+        T data = frente.data;
+        frente = frente.next;
         if (frente == null) {
-            fin = null;
+            finalCola = null;
         }
-        tamaño--;
+        tamano--;
         return data;
     }
 
-   
-    public T verFrente() {
-        if (estaVacia()) {
-            return null;
+    public void remover(T data) {
+        if (estaVacia()) return;
+        if (frente.data.equals(data)) {
+            desencolar();
+            return;
         }
-        return frente.getData();
+        Nodo<T> actual = frente;
+        while (actual.next != null) {
+            if (actual.next.data.equals(data)) {
+                if (actual.next == finalCola) {
+                    finalCola = actual;
+                }
+                actual.next = actual.next.next;
+                tamano--;
+                return;
+            }
+            actual = actual.next;
+        }
+    }
+
+    public T obtener(int index) {
+        if (index < 0 || index >= tamano) return null;
+        Nodo<T> actual = frente;
+        for (int i = 0; i < index; i++) {
+            actual = actual.next;
+        }
+        return actual.data;
     }
 
     public boolean estaVacia() {
-        return tamaño == 0;
+        return frente == null;
     }
 
-    public int tamaño() {
-        return tamaño;
-    }
-    
-    public void limpiar() {
-        frente = null;
-        fin = null;
-        tamaño = 0;
+    public int tamano() {
+        return tamano;
     }
 }
