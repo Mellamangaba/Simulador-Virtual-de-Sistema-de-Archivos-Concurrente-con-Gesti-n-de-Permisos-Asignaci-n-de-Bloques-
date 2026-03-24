@@ -10,7 +10,6 @@ public class HiloPlanificador extends Thread {
     private MainInterface vista;
     private boolean corriendo = true;
     
-    // Nueva variable para elegir el algoritmo (Por defecto FIFO)
     private String algoritmoActual = "FIFO"; 
 
     public HiloPlanificador(SistemaArchivos fs, MainInterface vista) {
@@ -18,7 +17,6 @@ public class HiloPlanificador extends Thread {
         this.vista = vista;
     }
 
-    // Método para que la interfaz le cambie el algoritmo en vivo
     public void setAlgoritmo(String algoritmo) {
         this.algoritmoActual = algoritmo;
     }
@@ -31,7 +29,6 @@ public class HiloPlanificador extends Thread {
                     
                     Proceso p = null;
                     
-                    // 1. ELEGIMOS EL PROCESO SEGÚN EL ALGORITMO
                     switch (algoritmoActual) {
                         case "SSTF":
                             p = fs.obtenerSiguienteProcesoSSTF();
@@ -50,7 +47,6 @@ public class HiloPlanificador extends Thread {
                     if (p != null) {
                         p.setEstado("Ejecutando");
                         
-                        // 2. MOVEMOS EL CABEZAL AL BLOQUE DESTINO
                         fs.setPosicionCabezal(p.getBloqueDestino());
                         
                         vista.actualizarVista();

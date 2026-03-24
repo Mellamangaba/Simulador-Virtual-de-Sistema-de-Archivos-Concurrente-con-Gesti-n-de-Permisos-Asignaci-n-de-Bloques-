@@ -24,6 +24,7 @@ public class Archivo {
         this.bloquesAsignados = new ListaSimple<>(); 
         this.esDirectorio = false; 
         this.padre = padre; 
+        this.color = generarColorAleatorio();
     }
 
     public Archivo(String nombre, String padre) {
@@ -34,6 +35,7 @@ public class Archivo {
         this.bloquesAsignados = new ListaSimple<>();
         this.esDirectorio = true; 
         this.padre = padre;
+        this.color = generarColorAleatorio();
     }
 
     public String getNombre() { return nombre; }
@@ -47,7 +49,18 @@ public class Archivo {
 
     private int cantidadLectores = 0;
     private boolean estaEscribiendo = false;
+    private java.awt.Color color;
 
+    private java.awt.Color generarColorAleatorio() {
+        int r = (int)(Math.random() * 200) + 55; 
+        int g = (int)(Math.random() * 200) + 55;
+        int b = (int)(Math.random() * 200) + 55;
+        return new java.awt.Color(r, g, b);
+    }
+    
+    public java.awt.Color getColor() {
+        return color;
+    }
     public synchronized boolean intentarLockLectura() {
         if (estaEscribiendo) {
             return false; 

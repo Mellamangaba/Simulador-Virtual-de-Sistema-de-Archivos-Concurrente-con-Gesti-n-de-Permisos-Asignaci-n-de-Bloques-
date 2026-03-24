@@ -54,7 +54,7 @@ private void inicializarDiscoGrafico() {
                 if (arch != null) {
                     System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
                     
-                            bloque.setBackground(obtenerColorExtension(arch.getExtension()));                } else {
+                            bloque.setBackground(arch.getColor());                } else {
                     bloque.setBackground(new java.awt.Color(231, 76, 60));
                 }
             } else {
@@ -332,6 +332,8 @@ private java.awt.Color obtenerColorExtension(String ext) {
     }// </editor-fold>//GEN-END:initComponents
 private void actualizarTabla() {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
+        
+        modelo.setColumnIdentifiers(new Object[]{"Color", "Nombre", "Extensión", "Bloques", "Tamaño"});
         modelo.setRowCount(0); 
         
         for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
@@ -340,7 +342,12 @@ private void actualizarTabla() {
                 int tamanoKB = arch.getBloques() * 4;
                 String tamanoTexto = tamanoKB + " KB";
                 
+                java.awt.Color c = arch.getColor();
+                String colorHex = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+                String cuadritoColor = "<html><font size='5' color='" + colorHex + "'>███</font></html>";
+                
                 modelo.addRow(new Object[]{
+                    cuadritoColor, 
                     arch.getNombre(), 
                     arch.getExtension(), 
                     arch.getBloques() + " bloques", 
