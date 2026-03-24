@@ -331,38 +331,34 @@ private java.awt.Color obtenerColorExtension(String ext) {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 private void actualizarTabla() {
+    // 1. Obtenemos el modelo del JTable 
     javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tablaAsignacion.getModel();
     
-    // Cambiamos "dueño" por "1er Bloque" en las cabeceras
+    // AQUÍ VA EL PRIMER BLOQUE: Configurar las cabeceras
     modelo.setColumnIdentifiers(new Object[]{"Color", "Nombre", "Extensión", "1er Bloque", "Tamaño"});
+    
+    // Limpiamos la tabla antes de volver a llenarla
     modelo.setRowCount(0); 
     
+    // Recorremos la lista de archivos
     for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
         proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
         
+        // Solo mostramos archivos, no carpetas 
         if (!arch.isEsDirectorio()) { 
-            // 1. Calculamos tamaño
-            int tamanoKB = arch.getBloques() * 4;
             
-            // 2. OBTENEMOS EL PRIMER BLOQUE (Lo que pide la rúbrica)
-            String primerBloque = "N/A";
-            if (arch.getBloquesAsignados() != null && arch.getBloquesAsignados().tamano() > 0) {
-                // Obtenemos el primer número de la lista de bloques
-                primerBloque = arch.getBloquesAsignados().obtener(0).toString();
-            }
-
-            // 3. Lógica del cuadrito de color
+            // Lógica del cuadrito de color 
             java.awt.Color c = arch.getColor();
             String colorHex = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
             String cuadritoColor = "<html><font size='5' color='" + colorHex + "'>███</font></html>";
             
-            // 4. Agregamos la fila
+            //  Agregar la fila con el dato del Primer Bloque
             modelo.addRow(new Object[]{
-                cuadritoColor,      // Color
-                arch.getNombre(),   // Nombre
-                arch.getExtension(),// Extensión
-                primerBloque,       // <--- AQUÍ VA EL PRIMER BLOQUE
-                tamanoKB + " KB"    // Tamaño
+                cuadritoColor, 
+                arch.getNombre(), 
+                arch.getExtension(), 
+                (arch.getBloquesAsignados().tamano() > 0 ? arch.getBloquesAsignados().obtener(0) : "N/A"), // <--- Punto 1 de la rúbrica
+                (arch.getBloques() * 4) + " KB"
             });
         }
     }
@@ -648,7 +644,31 @@ private void actualizarArbol() {
     } else {
         javax.swing.JOptionPane.showMessageDialog(this, "No hay procesos pendientes en la cola.");
     }
-
+if (procesoActual != null) {
+    String operacion = procesoActual.getOperacion(); 
+    String id = procesoActual.getIdProceso(); // Usamos el ID para saber el tipo
+    
+    // Buscamos el archivo en la lista
+    for (int i = 0; i < fs.getListaArchivos().tamano(); i++) {
+        proyecto2_so.Modelos.Archivo arch = fs.getListaArchivos().obtener(i);
+        
+        // Si el nombre del archivo está en la descripción de la operación...
+        if (operacion.contains(arch.getNombre())) {
+            
+            // CAMBIO AQUÍ: Usamos getIdProceso() que sí existe en tu clase
+            if (id.contains("Escritura")) {
+                arch.intentarLockEscritura();
+            } else {
+                // Por defecto, si no es escritura, asumimos lectura
+                arch.intentarLockLectura();
+            }
+            break; 
+        }
+    }
+    
+    // Tu lógica para mover el cabezal y el disco
+    actualizarVista();
+}
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -685,23 +705,23 @@ private void actualizarArbol() {
     private void arbolArchivosValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_arbolArchivosValueChanged
         DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
     
-    if (nodoSeleccionado != null && nodoSeleccionado.isLeaf()) { 
+    // Solo actuamos si se selecciona un archivo (una hoja del árbol)
+    if (nodoSeleccionado != null && nodoSeleccionado.isLeaf()) {
         String nombreBuscado = nodoSeleccionado.getUserObject().toString();
+        
+        // Buscamos el objeto Archivo en tu lógica de Sistema de Archivos
         proyecto2_so.Modelos.Archivo arch = fs.buscarArchivoPorNombre(nombreBuscado);
         
         if (arch != null) {
-            // "Dueño" ahora mostrará el nombre de la carpeta padre
-            String carpetaPadre = arch.getPadre();
-            if (carpetaPadre == null || carpetaPadre.isEmpty() || carpetaPadre.equals("/")) {
-                carpetaPadre = "Raíz (Disco Local)";
-            }
-
-            String detalles = "DATOS DEL NODO:\n" +
+            // Construimos el mensaje con lo que pide la rúbrica: Nombre, Tamaño y Dueño (Carpeta)
+            String detalles = "--- DETALLES DEL NODO ---\n" +
                               "📂 Nombre: " + arch.getNombre() + "\n" +
-                              "📁 Dueño (Carpeta): " + carpetaPadre + "\n" + // <--- CAMBIO AQUÍ
+                              "📁 Dueño (Carpeta): " + arch.getPadre() + "\n" +
                               "📏 Tamaño: " + (arch.getBloques() * 4) + " KB\n" +
-                              "📍 Inicio: Bloque " + arch.getBloquesAsignados().obtener(0);
+                              "📍 Primer Bloque: " + (arch.getBloquesAsignados().tamano() > 0 ? arch.getBloquesAsignados().obtener(0) : "N/A") + "\n" +
+                              "⚠️ ESTADO LOCK: " + arch.getEstadoLock(); 
             
+            // Mostramos la ventanita con la información
             javax.swing.JOptionPane.showMessageDialog(this, detalles, "Información del Archivo", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         }
     }

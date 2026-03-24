@@ -14,7 +14,12 @@ public class Archivo {
     private ListaSimple<Integer> bloquesAsignados; 
     
     private boolean esDirectorio;
-    private String padre;
+    private String padre; // Esta es la que usaremos como "Dueño" (Carpeta a la que pertenece)
+    private java.awt.Color color;
+    
+    // Variables para el control de acceso (Locks)
+    private int cantidadLectores = 0;
+    private boolean estaEscribiendo = false;
 
     public Archivo(String nombre, int bloques, String padre) {
         this.nombre = nombre;
@@ -38,6 +43,7 @@ public class Archivo {
         this.color = generarColorAleatorio();
     }
 
+    // --- Getters y Setters ---
     public String getNombre() { return nombre; }
     public String getExtension() { return extension; }
     public int getBloques() { return bloques; }
@@ -45,11 +51,13 @@ public class Archivo {
     public ListaSimple<Integer> getBloquesAsignados() { return bloquesAsignados; } 
     public void setNombre(String nuevoNombre) { this.nombre = nuevoNombre; }
     public boolean isEsDirectorio() { return esDirectorio; }
-    public String getPadre() { return padre; }
+    
+    // Ajustado para que si no tiene padre, devuelva "Raíz"
+    public String getPadre() { 
+        return (padre == null || padre.isEmpty() || padre.equals("/")) ? "Raíz" : padre; 
+    }
 
-    private int cantidadLectores = 0;
-    private boolean estaEscribiendo = false;
-    private java.awt.Color color;
+    public java.awt.Color getColor() { return color; }
 
     private java.awt.Color generarColorAleatorio() {
         int r = (int)(Math.random() * 200) + 55; 
@@ -58,28 +66,20 @@ public class Archivo {
         return new java.awt.Color(r, g, b);
     }
     
-    public java.awt.Color getColor() {
-        return color;
-    }
+    // --- Lógica de Locks (Sincronizada) ---
     public synchronized boolean intentarLockLectura() {
-        if (estaEscribiendo) {
-            return false; 
-        }
+        if (estaEscribiendo) return false; 
         cantidadLectores++;
         return true;
     }
 
     public synchronized void liberarLockLectura() {
-        if (cantidadLectores > 0) {
-            cantidadLectores--;
-        }
+        if (cantidadLectores > 0) cantidadLectores--;
         notifyAll(); 
     }
 
     public synchronized boolean intentarLockEscritura() {
-        if (cantidadLectores > 0 || estaEscribiendo) {
-            return false; 
-        }
+        if (cantidadLectores > 0 || estaEscribiendo) return false; 
         estaEscribiendo = true;
         return true;
     }
@@ -89,25 +89,10 @@ public class Archivo {
         notifyAll(); 
     }
 
+    // Método para mostrar el estado en el JTree
     public synchronized String getEstadoLock() {
-        if (estaEscribiendo) return "Bloqueado (Escritura Exclusiva)";
-        if (cantidadLectores > 0) return "Bloqueado (Lectura Compartida x" + cantidadLectores + ")";
-        return "Libre";
+        if (estaEscribiendo) return "🚫 Bloqueado (Escritura Exclusiva)";
+        if (cantidadLectores > 0) return "🔒 Bloqueado (Lectura Compartida x" + cantidadLectores + ")";
+        return "🔓 Libre";
     }
-    
-    private String nombreCarpetaPadre; // Esta variable guardará el nombre del directorio
-
-// En el constructor o con un Setter:
-public void setNombreCarpetaPadre(String nombre) {
-    this.nombreCarpetaPadre = nombre;
-}
-
-public String getNombreCarpetaPadre() {
-    return (nombreCarpetaPadre == null) ? "Raíz" : nombreCarpetaPadre;
-}
-
-private String dueno = "Admin"; // Por defecto puedes ponerle Admin
-
-public String getDueno() { return dueno; }
-public void setDueno(String dueno) { this.dueno = dueno; }
 }
