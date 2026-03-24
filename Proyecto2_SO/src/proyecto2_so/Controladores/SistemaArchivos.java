@@ -189,4 +189,14 @@ public class SistemaArchivos {
         if (seleccionado != null) colaProcesos.remover(seleccionado);
         return seleccionado;
     }
+    
+    public proyecto2_so.Modelos.Archivo buscarArchivoPorNombre(String nombre) {
+    for (int i = 0; i < listaArchivos.tamano(); i++) {
+        proyecto2_so.Modelos.Archivo arch = listaArchivos.obtener(i);
+        if (arch.getNombre().equals(nombre)) {
+            return arch;
+        }
+    }
+    return null; // Si no lo encuentra
+}
 }

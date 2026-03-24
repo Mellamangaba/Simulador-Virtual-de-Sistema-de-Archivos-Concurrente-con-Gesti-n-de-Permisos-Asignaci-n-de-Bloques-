@@ -105,4 +105,9 @@ public void setNombreCarpetaPadre(String nombre) {
 public String getNombreCarpetaPadre() {
     return (nombreCarpetaPadre == null) ? "Raíz" : nombreCarpetaPadre;
 }
+
+private String dueno = "Admin"; // Por defecto puedes ponerle Admin
+
+public String getDueno() { return dueno; }
+public void setDueno(String dueno) { this.dueno = dueno; }
 }
