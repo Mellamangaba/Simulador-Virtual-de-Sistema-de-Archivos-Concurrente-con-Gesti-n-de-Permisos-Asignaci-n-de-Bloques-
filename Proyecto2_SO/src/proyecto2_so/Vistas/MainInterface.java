@@ -54,8 +54,7 @@ private void inicializarDiscoGrafico() {
                 if (arch != null) {
                     System.out.println("Bloque " + i + " pertenece a: " + arch.getNombre() + " con ext: " + arch.getExtension());
                     
-                    bloque.setBackground(obtenerColorPorExtension(arch.getExtension()));
-                } else {
+                            bloque.setBackground(obtenerColorExtension(arch.getExtension()));                } else {
                     bloque.setBackground(new java.awt.Color(231, 76, 60));
                 }
             } else {
@@ -528,24 +527,25 @@ private void actualizarArbol() {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         String modoSeleccionado = jComboBox1.getSelectedItem().toString();
-        
-        if (modoSeleccionado.equals("Usuario")) {
-            jButton1.setEnabled(false); 
-            jButton2.setEnabled(false); 
-            jButton3.setEnabled(false); 
-            jButton4.setEnabled(false); 
+
+        if (modoSeleccionado.equals("Administrador")) {
+            jButton6.setEnabled(true);
+            jButton3.setEnabled(true);
+            btnSimularFallo.setEnabled(true);
+            jButton1.setEnabled(true);
+            jButton2.setEnabled(true);
             
-            agregarLog("🔐 Permisos cambiados: Modo USUARIO (Solo Lectura).");
+            agregarLog("🛡️ Modo Administrador activado: Todos los permisos concedidos.");
+
+        } else if (modoSeleccionado.equals("Usuario")) {
+            jButton6.setEnabled(false);
+            jButton3.setEnabled(false);
+            btnSimularFallo.setEnabled(false);
             
-        } 
-        else if (modoSeleccionado.equals("Administrador")) {
-            jButton1.setEnabled(true);  
-            jButton2.setEnabled(true);  
-            jButton3.setEnabled(true);  
-            jButton4.setEnabled(true);  
             
-            agregarLog("🔓 Permisos cambiados: Modo ADMINISTRADOR (Control Total).");
+            agregarLog("👤 Modo Usuario activado: Permisos restringidos.");
         }
+    
     
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
